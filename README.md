@@ -26,6 +26,8 @@ An easy to use Spigot plugin to roll back areas at the stage they were saved!
 /ar reload - Reloads AreaReloader's configuration file
 
 /ar display <AreaName> - Displays particles around an area
+  
+/ar cancel <AreaName, All> - Cancel one or all areas from loading
 
 ![Core Icon](https://media.discordapp.net/attachments/595364073147728025/1049105316073177168/permissions.jpg)
 
@@ -46,6 +48,8 @@ areareloader.command.hook - Gives access to the /ar hook command
 areareloader.command.info - Gives access to the /ar info command
 
 areareloader.command.reload - Gives access to the /ar reload command
+  
+areareloader.command.cancel - Gives access to the /ar cancel command
 
 areareloader.command.admin - Gives access to all commands
 
@@ -60,7 +64,7 @@ The config is very easy to understand as it is composed by regular language stri
 Open a new issue in the [Issues category](https://github.com/Hetag1216/AreaReloader/issues)
 When opening a new issue please specify:
 - Spigot's version - /version;
-- WorldEdit's version;
+- FastAsyncWorldEdit's version;
 - Where/when you met the issue by specifying the command which threw an error and specify where the operations stop, debugging will show every operation ran when executing commands.
 - Paste console's error logs (if there are any)
 
@@ -71,8 +75,8 @@ Default value: false (turn 'false' to true and then restart the server to enable
 
 Area Interval: This is the amount of time set in milliseconds that decides the delay between each section loading whenever an area is being loaded.
 I recommend keeping this value as the default one as a higher or lower value could affect your server's performance in bad or good, depending on the server's resources and tasks that are currently running at the moment of the area's load, so choose a wise value whenever changing this value.
-Default value: 200
-(0.2 seconds)
+Default value: 500
+(0.5 seconds)
 
 ~~------------------------------------------------------------------------------------------------------------------------------------~~
 
