@@ -1,0 +1,58 @@
+package com.hetag.areareloader.fawe.reflection.V1_14;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
+
+import com.hetag.areareloader.fawe.reflection.AreaProtocol;
+
+/**
+ * Unsupported dependency version. Any server should use the plugin with the
+ * right version of Java (16+) and the supported versions of FAWE.
+ * 
+ * @author Hedario
+ *
+ */
+@Deprecated
+public class Protocol_1_14 implements AreaProtocol {
+
+	private static Class<?> dustOptions;
+	private static Constructor<?> dustConstructor;
+
+	@Override
+	public void playRedstoneParticle(World world, Location location, Color color) {
+		if (dustConstructor == null) {
+			try {
+				getClassesAndMethods();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+
+		Object[] dustParam = { org.bukkit.Color.fromBGR(color.getRed(), color.getGreen(), color.getBlue()), 1 };
+
+		try {
+			Object dust = dustConstructor.newInstance(dustParam);
+
+			world.spawnParticle(Particle.REDSTONE, location, 0, color.getRed() / 255, color.getGreen() / 255,
+					color.getBlue() / 255, 1, dust);
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void getClassesAndMethods() throws NoSuchMethodException, ClassNotFoundException {
+		dustOptions = Class.forName("org.bukkit.Particle$DustOptions");
+		dustConstructor = dustOptions.getConstructor(org.bukkit.Color.class, float.class);
+	}
+}

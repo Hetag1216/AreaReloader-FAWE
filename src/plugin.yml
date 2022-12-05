@@ -1,0 +1,26 @@
+name: AreaReloader-FAWE
+main: com.hetag.areareloader.AreaReloader
+version: ${project.version}
+api-version: 1.18
+authors: ['Hedario']
+depend: ['FastAsyncWorldEdit']
+commands:
+  ar:
+    usage: /<command>
+    description: AR main command.
+permissions:
+  areareloader.command.admin: 
+    default: op
+    description: Access to all commands.
+    children:
+      areareloader.command.list: true
+      areareloader.command.create: true
+      areareloader.command.load: true
+      areareloader.command.delete: true
+      areareloader.command.hook: true
+      areareloader.command.help: true
+      areareloader.command.version: true
+      areareloader.command.reload: true
+      areareloader.command.info: true
+      areareloader.command.display: true
+      areareloader.command.cancel: true
