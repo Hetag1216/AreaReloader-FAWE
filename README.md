@@ -1,5 +1,5 @@
 # AreaReloader
-![Core Icon](https://media.discordapp.net/attachments/595364073147728025/1049115571347796029/AR-FAWE_1.jpg)
+![Core Icon](https://media.discordapp.net/attachments/595364073147728025/1049116713872011424/background2_2.jpg)
 
 An easy to use Spigot plugin to roll back areas at the stage they were saved!
 
