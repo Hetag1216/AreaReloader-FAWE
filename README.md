@@ -1,9 +1,9 @@
 # AreaReloader
-![Core Icon](https://media.discordapp.net/attachments/595194807932944385/614115793382146058/AR.png)
+![Core Icon](https://media.discordapp.net/attachments/595364073147728025/1049115571347796029/AR-FAWE_1.jpg)
 
 An easy to use Spigot plugin to roll back areas at the stage they were saved!
 
-![Core Icon](https://cdn.discordapp.com/attachments/595194807932944385/614124252387606565/ARCommands.png)
+![Core Icon](https://media.discordapp.net/attachments/595364073147728025/1049105316312264794/commands.jpg)
 
 /ar - Shows plugin's help lines
 
@@ -27,7 +27,7 @@ An easy to use Spigot plugin to roll back areas at the stage they were saved!
 
 /ar display <AreaName> - Displays particles around an area
 
-![Core Icon](https://cdn.discordapp.com/attachments/595194807932944385/614124189229514772/ARPermissions.png)
+![Core Icon](https://media.discordapp.net/attachments/595364073147728025/1049105316073177168/permissions.jpg)
 
 areareloader.command.help - Gives access to the /ar help command
 
@@ -49,7 +49,7 @@ areareloader.command.reload - Gives access to the /ar reload command
 
 areareloader.command.admin - Gives access to all commands
 
-![Core Icon](https://i.imgur.com/v2uHY9wh.png)
+![Core Icon](https://media.discordapp.net/attachments/595364073147728025/1049105315699892244/configuration.jpg)
 
 The main configuration file where you will be able to edit your own language settings is named as "config.yml".
 The config is very easy to understand as it is composed by regular language strings, however, the plugin brings some variables and new configuration settings that affect the plugin.
