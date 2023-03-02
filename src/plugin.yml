@@ -1,5 +1,5 @@
 name: AreaReloader-FAWE
-main: com.hetag.areareloader.AreaReloader
+main: com.hedario.areareloader.fawe.AreaReloader
 version: ${project.version}
 api-version: 1.18
 authors: ['Hedario']
