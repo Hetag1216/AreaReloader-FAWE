@@ -19,7 +19,7 @@ public class VersionCommand extends ARCommand {
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 1)) {
 			return;
 		}
-		sendMessage(sender, "&8&m-----&r "+ this.prefix + /*&6[&eAreaReloader&6]&8*/ "&8&m-----", false);
+		sendMessage(sender, "&8&m-----&r "+ this.prefix + "&8&m-----", false);
 		sendMessage(sender, "&6Version &7» &e" + AreaReloader.plugin.getDescription().getVersion(), false);
 		sendMessage(sender, "&6API version &7» &e" + AreaReloader.plugin.getDescription().getAPIVersion(), false);
 		sendMessage(sender, "&6Author &7» &e" + AreaReloader.plugin.getDescription().getAuthors().toString().replace("[", "").toString().replace("]", ""), false);

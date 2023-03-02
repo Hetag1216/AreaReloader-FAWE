@@ -94,7 +94,7 @@ public class Manager {
 		config.addDefault("Commands.Load.Description", "&7Loads an existing area.");
 		config.addDefault("Commands.Load.Preparing", "Preparing to load &e%area%&6.");
 		config.addDefault("Commands.Load.Success", "Area &e%area%&6 was succesfully loaded in &e%time%&e.");
-		config.addDefault("Commands.Load.Fail", "&e%area&6 has failed to load! Error has been traced and sent to console, enable debug for a more accurate description.");
+		config.addDefault("Commands.Load.Fail", "&e%area%&6 has failed to load! Error has been traced and sent to console, enable debug for a more accurate description.");
 		config.addDefault("Commands.Load.InvalidArea", "&e%area% &6does not exist.");
 		config.addDefault("Commands.Load.AlreadyLoading", "e%area%&6 is already queued and being loaded!");
 
