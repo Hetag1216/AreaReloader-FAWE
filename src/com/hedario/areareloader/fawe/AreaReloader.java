@@ -86,7 +86,7 @@ public class AreaReloader extends JavaPlugin implements Listener {
 		}
 		useMetrics = Manager.getConfig().getBoolean("Settings.Metrics.Enabled");
 		if (useMetrics) {
-	        int pluginId = 17011;
+	        int pluginId = 106585;
 	        new Metrics(this, pluginId);
 	        log.info("Metrics has been enabled, thank you!");
 		} else {
