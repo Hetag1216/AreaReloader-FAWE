@@ -3,7 +3,6 @@ package com.hedario.areareloader.fawe;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -109,14 +108,14 @@ public class AreaLoader {
 	}
 	
 	private void progressAll() {
-		List<Integer> completed = new ArrayList<Integer>();
+		List<AreaLoader> completed = new ArrayList<AreaLoader>();
 		for (AreaLoader al : areas) {
 			if (al.completed) {
 				if ((al.sender != null)) {
 					final long time = System.currentTimeMillis() - fakeTime;
 					al.sender.sendMessage(prefix() + success().replace("%area%", al.getArea()).replace("%time%", AreaMethods.formatTime(time)));
 				}
-				completed.add(areas.indexOf(al));
+				completed.add(al);
 				// remove the area from the queue and cancel its running task.
 				if (AreaReloader.getInstance().getQueue().isQueued(al.getArea())) {
 					AreaReloader.getInstance().getQueue().remove(al.getArea(), AreaReloader.getInstance().getQueue().getTaskByName(al.getArea()));
@@ -152,9 +151,8 @@ public class AreaLoader {
 					}
 				}
 			}
-		for (Iterator<Integer> iterator = completed.iterator(); iterator.hasNext();) {
-			int id = ((Integer) iterator.next()).intValue();
-			areas.remove(id);
+		for (AreaLoader l : completed) {
+			areas.remove(l);
 		}
 	}
 	
