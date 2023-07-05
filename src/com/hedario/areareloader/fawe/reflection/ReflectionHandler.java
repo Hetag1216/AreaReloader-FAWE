@@ -1,4 +1,4 @@
-package com.hedario.areareloader.fawe.effects;
+package com.hedario.areareloader.fawe.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

@@ -189,7 +189,7 @@ public class AreaReloader extends JavaPlugin implements Listener {
 	 * Checks for plugin's update from the official spigot page.
 	 */
 	private void checkForUpdates() {
-		new UpdateChecker(this, 70655).getVersion(version -> {
+		new UpdateChecker(this, 106585).getVersion(version -> {
 			log.info("-=-=-=-= AreaReloader Updater =-=-=-=-");
 			if (this.getDescription().getVersion().equals(version)) {
 				log.info("You're running the latest version of the plugin!");
