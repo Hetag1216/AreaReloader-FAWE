@@ -196,7 +196,7 @@ public class AreaReloader extends JavaPlugin implements Listener {
 			} else {
 				log.info("AreaReloader " + version + " is now available!");
 				log.info("You're running AreaReloader " + this.getDescription().getVersion());
-				log.info("DOWNLOAD IT AT: https://www.spigotmc.org/resources/areareloader.70655/");
+				log.info("DOWNLOAD IT AT: https://www.spigotmc.org/resources/areareloader-fawe.106585/");
 			}
 			log.info("-=-=-=-= -=- =-=-=-=-");
 		});
