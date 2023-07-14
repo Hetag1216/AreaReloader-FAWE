@@ -37,6 +37,7 @@ public class Executor {
 		new ConfigReloadCommand();
 		new DisplayCommand();
 		new CancelCommand();
+		new LocationCommand();
 		help = Manager.getConfig().getStringList("Commands.HelpLines");
 
 		CommandExecutor exe = new CommandExecutor() {

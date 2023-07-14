@@ -3,6 +3,8 @@ package com.hedario.areareloader.fawe.commands;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 
 import com.hedario.areareloader.fawe.AreaLoader;
@@ -38,10 +40,18 @@ public class InfoCommand extends ARCommand {
 			sendMessage(sender, "&6World &7» &e" + AreaMethods.getAreaInWorld(area) , false);
 			sendMessage(sender, "&6First corner &7» &e" + AreaMethods.getAreaX(area) + "&7, &e" + AreaMethods.getAreaY(area) + "&7, &e" + AreaMethods.getAreaZ(area), false);
 			sendMessage(sender, "&6Second corner &7» &e" + AreaMethods.getAreaMaxX(area) + "&7, &e" + AreaMethods.getAreaMaxY(area) + "&7, &e" + AreaMethods.getAreaMaxZ(area), false);
+			if (Manager.areas.getConfig().getBoolean("Areas." + area + ".SafeLocation.Enabled")) {
+				World world = Bukkit.getWorld(Manager.areas.getConfig().getString("Areas." + area + ".SafeLocation.World"));
+				double x = Manager.areas.getConfig().getDouble("Areas." + area + ".SafeLocation.X");
+				double y = Manager.areas.getConfig().getDouble("Areas." + area + ".SafeLocation.Y");
+				double z = Manager.areas.getConfig().getDouble("Areas." + area + ".SafeLocation.Z");
+				sendMessage(sender, "&6Safe location &7» &e" + world.getName() + "&7, &e" + Math.round(x) + "&7, &e" + Math.round(y) + "&7, &e" + Math.round(z), false);
+			}
 			sendMessage(sender, "&6Is being displayed &7» &e" + display, false);
 			sendMessage(sender, "&6Has copied entities &7» &e" + Manager.areas.getConfig().getBoolean("Areas." + area + ".HasCopiedEntities"), false);
 			sendMessage(sender, "&6Has copied biomes &7» &e" + Manager.areas.getConfig().getBoolean("Areas." + area + ".HasCopiedBiomes"), false);
 			sendMessage(sender, "&6Is using fast mode &7» &e" + AreaMethods.fastMode, false);
+			
 			if (AreaReloader.getInstance().getQueue().isQueued(area)) {
 				for (AreaLoader al : AreaLoader.areas) {
 					if (al.getArea().contains(area))
