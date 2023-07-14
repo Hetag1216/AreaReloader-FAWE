@@ -121,35 +121,50 @@ public class AreaMethods {
 		}
 		return Integer.valueOf(size);
 	}
-	
 
 	public static boolean loadSchematicArea(CommandSender p, String area, String schemFile, World world, Location location) throws WorldEditException, FileNotFoundException, IOException {
 		File file = new File(AreaReloader.plugin.getDataFolder() + File.separator + "Areas" + File.separator + area + File.separator + schemFile + ".schem");
 		Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Building -=-=-=-=-=-=-=-=-=-=-");
 		Manager.printDebug("Area: " + area);
-		
 		if (!file.exists()) {
 			Manager.printDebug("Schematic File: Missing.");
 			return false;
 		}
 		Manager.printDebug("Schematic File: Found.");
-		
         try {
-            FaweAPI.load(file)
-            .paste(FaweAPI.getWorld(world.getName()), BlockVector3.at(location.getBlockX(), location.getBlockY(), location.getBlockZ()));       	
+            FaweAPI.load(file).paste(FaweAPI.getWorld(world.getName()), BlockVector3.at(location.getBlockX(), location.getBlockY(), location.getBlockZ()));       	
             Manager.printDebug("Section has been built.");
         } catch (Exception e) {
 			Manager.printDebug("An error has occurred when building area: " + file.getName());
 			Manager.printDebug(e.getMessage());
             Manager.printDebug("Printing stack trace to console...");
         }
-
 		Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
 		Manager.printDebug("");
 		return true;
 	}
-
-
+	
+	/**
+	 * Creates a brand new area
+	 * 
+	 * @param player       The player creating the area
+	 * @param area         The name
+	 * @param size         The size of the area <b>
+	 *                     <p>
+	 *                     The default value is supposed to comprehend the whole
+	 *                     chunk, so the default one should be 16 as specified in
+	 *                     {@link#CreateCommand}. The actual saved values will be
+	 *                     the result of the area's XZ size, which will represent
+	 *                     how wide the area is in chunks.</b>
+	 *                     </p>
+	 * @param copyEntities Whether or not entities should be saved
+	 * @param copyBiomes   Whether or not biomes should be saved
+	 * @return true if the area was created correctly
+	 *         <p>
+	 *         false if the creation was unsuccessful
+	 *         </p>
+	 * @throws WorldEditException
+	 */
 	public static boolean createNewArea(final Player player, final String area, final int size, final boolean copyEntities, final boolean copyBiomes) throws WorldEditException {
 		File dir = new File(AreaReloader.plugin.getDataFolder() + File.separator + "Areas" + File.separator + area);
 		if (dir.exists()) {
@@ -173,7 +188,6 @@ public class AreaMethods {
 			int curX = 0;
 			BlockVector3 min = sel.getMinimumPoint();
 			BlockVector3 max = sel.getMaximumPoint();
-
 			Manager.areas.getConfig().set("Areas." + area + ".World", sel.getWorld().getName());
 			Manager.areas.getConfig().set("Areas." + area + ".HasCopiedEntities", copyEntities);
 			Manager.areas.getConfig().set("Areas." + area + ".HasCopiedBiomes", copyBiomes);
@@ -247,7 +261,6 @@ public class AreaMethods {
 						Manager.printDebug(e.getMessage());
 						e.printStackTrace();
 					}
-
 					Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
 					Manager.printDebug("");
 					curZ++;
@@ -258,10 +271,9 @@ public class AreaMethods {
 			}
 			maxX--;
 			maxZ--;
-			
 			Manager.areas.getConfig().set("Areas." + area + ".Size.X", maxX);
 			Manager.areas.getConfig().set("Areas." + area + ".Size.Z", maxZ);
-			Manager.areas.getConfig().set("Areas." + area + ".Size.Chunk", size);
+			Manager.areas.getConfig().set("Areas." + area + ".Size.Chunk", (maxX * maxZ > 0 ? maxX * maxZ : 1));
 			Manager.areas.getConfig().set("Areas." + area + ".AutoReload.Enabled", false);
 			Manager.areas.getConfig().set("Areas." + area + ".AutoReload.Time", 200000);
 			Manager.areas.saveConfig();
@@ -281,10 +293,8 @@ public class AreaMethods {
 			DisplayCommand.remove(area, null);
 		}
 		AreaLoader.reset(area);
-		
 		Manager.printDebug("Removed from the loading instances.");
 		Manager.printDebug("Removed from the automatic loading instances.");
-		
 		Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
 		Manager.printDebug("");
 	}
@@ -297,6 +307,13 @@ public class AreaMethods {
 			}
 		}
 		return areas;
+	}
+	
+	public static boolean areaExist(final String area) {
+		if (Manager.areas.getConfig().contains("Areas." + area)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public static String getXCoord(String area) {
