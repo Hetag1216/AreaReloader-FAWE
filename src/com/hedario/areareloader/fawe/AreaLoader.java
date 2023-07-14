@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -13,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.hedario.areareloader.fawe.configuration.Manager;
+import com.hedario.areareloader.fawe.events.AreaCompleteEvent;
+import com.hedario.areareloader.fawe.events.AreaLoadEvent;
 import com.sk89q.worldedit.WorldEditException;
 public class AreaLoader {
 	public static List<AreaLoader> areas = new ArrayList<AreaLoader>();
@@ -39,16 +42,14 @@ public class AreaLoader {
 				Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
 			}
 			if (getSender() != null)
-			getSender().sendMessage(prefix() + "Area '" + ChatColor.YELLOW + area + ChatColor.GOLD + "' is already being loaded.");
+				getSender().sendMessage(prefix() + "Area '" + ChatColor.YELLOW + area + ChatColor.GOLD + "' is already being loaded.");
 			return;
 		}
-		if (sender != null) {
-			this.sender = sender;
-		}
+		
 		this.setArea(area);
 		this.maxX = x;
 		this.maxZ = z;
-		this.size = size;
+		this.size = 16;
 		chunks = 0;
 		x++;
 		z++;
@@ -58,6 +59,16 @@ public class AreaLoader {
 		time = System.currentTimeMillis();
 		areas.add(this);
 		manage();
+		if (getSender() != null) {
+			this.sender = sender;
+			if (getSender() instanceof Player) {
+				Bukkit.getServer().getPluginManager().callEvent(new AreaLoadEvent((Player) sender, area));
+				getSender().sendMessage("AL");
+			}
+		} else {
+			Bukkit.getServer().getPluginManager().callEvent(new AreaLoadEvent(area));
+			Bukkit.broadcastMessage("AL2");
+		}
 	}
 	
 	public static void init() {
@@ -101,6 +112,16 @@ public class AreaLoader {
 
 	private void complete() {
 		this.completed = true;
+		if (getSender() != null) {
+			if (getSender() instanceof Player) {
+				((Player) sender).getWorld().playSound(((Player) sender).getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.3F);
+				Bukkit.getServer().getPluginManager().callEvent(new AreaCompleteEvent(((Player) sender), area));
+				getSender().sendMessage("CC");
+			}
+		} else {
+			Bukkit.getServer().getPluginManager().callEvent(new AreaCompleteEvent(area));
+			Bukkit.broadcastMessage("CC2");
+		}
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
 			player.getWorld().playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.3F);
