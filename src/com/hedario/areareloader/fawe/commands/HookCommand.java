@@ -7,8 +7,6 @@ import org.bukkit.command.CommandSender;
 import com.hedario.areareloader.fawe.AreaReloader;
 import com.hedario.areareloader.fawe.configuration.Manager;
 
-import net.md_5.bungee.api.ChatColor;
-
 public class HookCommand extends ARCommand {
 	public HookCommand() {
 		super("hook", "/ar hook", formatColors(Manager.getConfig().getString("Commands.Hook.Description")), new String[] { "hook", "hooks" });
@@ -19,12 +17,12 @@ public class HookCommand extends ARCommand {
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 1)) {
 			return;
 		}
-		sender.sendMessage(ChatColor.GOLD + "-=-=-=-= Hooks =-=-=-=-");
-		sender.sendMessage(ChatColor.GRAY + "- " + ChatColor.YELLOW + "FastAsyncWorldEdit");
-		sender.sendMessage(AreaReloader.plugin.getStatus());
+		sendMessage(sender, "&6-=-=-=-= « &6 Hooks &7» &6=-=-=-=-", false);
+		sendMessage(sender, "&7- &eFastAsyncWorldEdit &7(&eFAWE&7)", false);
+		sendMessage(sender, AreaReloader.plugin.getStatus(), false);
 		if (AreaReloader.getWEInstance() != null) {
-			sender.sendMessage(ChatColor.GOLD + "Version: " + ChatColor.YELLOW + AreaReloader.getWEInstance().getDescription().getVersion());
+			sendMessage(sender, "&6Version &7» &e" + AreaReloader.getWEInstance().getDescription().getVersion(), false);
 		}
-		sender.sendMessage(ChatColor.GOLD + "-=-=-=-= -=- =-=-=-=-");
+		sendMessage(sender, "&6-=-=-=-= -=- =-=-=-=-", false);
 	}
 }
