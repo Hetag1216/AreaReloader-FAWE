@@ -72,6 +72,9 @@ public class AreaReloader extends JavaPlugin implements Listener {
 		
 		// AreaScheduler setup
 		AreaScheduler.init();
+		
+		// Instantiate events listener
+		new ARListener(this);
 
 		try {
 			new Executor(this);
@@ -177,7 +180,7 @@ public class AreaReloader extends JavaPlugin implements Listener {
 	public String getStatus() {
 		String enabled = ChatColor.GREEN + "Enabled";
 		String disabled = ChatColor.RED + "Disabled";
-		String status = ChatColor.DARK_AQUA + "Status: ";
+		String status = ChatColor.GOLD + "Status: ";
 		if (fawe != null && fawe.isEnabled()) {
 			return status + enabled;
 		} else {
