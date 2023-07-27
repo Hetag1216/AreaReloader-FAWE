@@ -45,7 +45,9 @@ public class InfoCommand extends ARCommand {
 				double x = Manager.areas.getConfig().getDouble("Areas." + area + ".SafeLocation.X");
 				double y = Manager.areas.getConfig().getDouble("Areas." + area + ".SafeLocation.Y");
 				double z = Manager.areas.getConfig().getDouble("Areas." + area + ".SafeLocation.Z");
-				sendMessage(sender, "&6Safe location &7» &e" + world.getName() + "&7, &e" + Math.round(x) + "&7, &e" + Math.round(y) + "&7, &e" + Math.round(z), false);
+				sendMessage(sender, "&6Safe location &7» &e" + world.getName() + "&7, &e" + x + "&7, &e" + y + "&7, &e" + z, false);
+				sendMessage(sender, "&6Safe location speed &7» &e" + Manager.areas.getConfig().getInt("Areas." + area + ".SafeLocation.Settings.Speed") , false);
+				sendMessage(sender, "&6Safe location interval &7» &e" + Manager.areas.getConfig().getInt("Areas." + area + ".SafeLocation.Settings.Interval") , false);
 			}
 			sendMessage(sender, "&6Is being displayed &7» &e" + display, false);
 			sendMessage(sender, "&6Has copied entities &7» &e" + Manager.areas.getConfig().getBoolean("Areas." + area + ".HasCopiedEntities"), false);
