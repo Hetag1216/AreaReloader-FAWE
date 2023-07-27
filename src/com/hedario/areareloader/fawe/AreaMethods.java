@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -15,6 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.fastasyncworldedit.core.FaweAPI;
+import com.hedario.areareloader.fawe.commands.ARCommand;
 import com.hedario.areareloader.fawe.commands.DisplayCommand;
 import com.hedario.areareloader.fawe.configuration.Manager;
 import com.sk89q.worldedit.EditSession;
@@ -70,7 +72,7 @@ public class AreaMethods {
 		return isInteger(s, 10);
 	}
 	
-	public static String formatTime(long time) {
+	/*public static String formatTime(long time) {
 		time = Math.abs(time);
 		final long days = time / TimeUnit.DAYS.toMillis(1);
 		final long hours = time % TimeUnit.DAYS.toMillis(1) / TimeUnit.HOURS.toMillis(1);
@@ -97,6 +99,36 @@ public class AreaMethods {
 		}
 		
 		return format + " " + t;
+	}*/
+	
+	/**
+	 * Formats time from milliseconds to: <b>days, hours, minutes, seconds</b>
+	 * @param time must be in milliseconds
+	 * @return a string with the formatted value
+	 */
+	public static String formatTime(final long time) {
+		String result = new String();
+		if (time < 0) {
+			result = "-";
+		}
+		final long days = TimeUnit.MILLISECONDS.toDays(time);
+		final long hours = TimeUnit.MILLISECONDS.toHours(time) % 24;
+		final long minutes = TimeUnit.MILLISECONDS.toMinutes(time) % 60;
+		final long seconds = TimeUnit.MILLISECONDS.toSeconds(time) % 60;
+		if (days > 0) 
+			result += String.valueOf(days) + "days ";
+		if (hours > 0)
+			result += String.valueOf(hours) + "hours ";
+		if (minutes > 0) 
+			result += String.valueOf(minutes) + "minutes ";
+		if (seconds >= 0) {
+			if (time > 0) {
+				result += String.valueOf(seconds) + "." + (String.valueOf(time).length() > 2 ? String.valueOf(time).substring(0, 1) : String.valueOf(time)) + "s";
+			} else {
+				result += String.valueOf(seconds) + "s";
+			}
+		}
+		return result;
 	}
 
 	public static boolean isInteger(String s, int radix) {
@@ -191,9 +223,9 @@ public class AreaMethods {
 			Manager.areas.getConfig().set("Areas." + area + ".World", sel.getWorld().getName());
 			Manager.areas.getConfig().set("Areas." + area + ".HasCopiedEntities", copyEntities);
 			Manager.areas.getConfig().set("Areas." + area + ".HasCopiedBiomes", copyBiomes);
-			Manager.areas.getConfig().set("Areas." + area + ".X", min.getBlockX());
-			Manager.areas.getConfig().set("Areas." + area + ".Y", min.getBlockY());
-			Manager.areas.getConfig().set("Areas." + area + ".Z", min.getBlockZ());
+			Manager.areas.getConfig().set("Areas." + area + ".Minimum.X", min.getBlockX());
+			Manager.areas.getConfig().set("Areas." + area + ".Minimum.Y", min.getBlockY());
+			Manager.areas.getConfig().set("Areas." + area + ".Minimum.Z", min.getBlockZ());
 			Manager.areas.getConfig().set("Areas." + area + ".Maximum.Z", max.getBlockZ());
 			Manager.areas.getConfig().set("Areas." + area + ".Maximum.Y", max.getBlockY());
 			Manager.areas.getConfig().set("Areas." + area + ".Maximum.X", max.getBlockX());
@@ -317,15 +349,22 @@ public class AreaMethods {
 	}
 	
 	public static String getXCoord(String area) {
-		return Manager.areas.getConfig().getString("Areas." + area + ".X");
+		return Manager.areas.getConfig().getString("Areas." + area + ".Minimum.X");
+	}
+	public static String getYCoord(String area) {
+		return Manager.areas.getConfig().getString("Areas." + area + ".Minimum.Y");
 	}
 	
 	public static String getZCoord(String area) {
-		return Manager.areas.getConfig().getString("Areas." + area + ".Z");
+		return Manager.areas.getConfig().getString("Areas." + area + ".Minimum.Z");
 	}
 	
 	public static String getAreaInWorld(String area) {
 		return Manager.areas.getConfig().getString("Areas." + area + ".World");
+	}
+	
+	public static World getWorld(String area) {
+		return Bukkit.getWorld(getAreaInWorld(area));
 	}
 	
 	public static String getFileName(String file, int x, int z) {
@@ -353,15 +392,15 @@ public class AreaMethods {
 	}
 	
 	public static Integer getAreaX(String area) {
-		return Manager.areas.getConfig().getInt("Areas." + area + ".X");
+		return Manager.areas.getConfig().getInt("Areas." + area + ".Minimum.X");
 	}
 	
 	public static Integer getAreaY(String area) {
-		return Manager.areas.getConfig().getInt("Areas." + area + ".Y");
+		return Manager.areas.getConfig().getInt("Areas." + area + ".Minimum.Y");
 	}
 	
 	public static Integer getAreaZ(String area) {
-		return Manager.areas.getConfig().getInt("Areas." + area + ".Z");
+		return Manager.areas.getConfig().getInt("Areas." + area + ".Minimum.Z");
 	}
 
 	public static Integer getAreaChunk(String area) {
@@ -378,6 +417,18 @@ public class AreaMethods {
 
 	public static void sendDebugMessage(CommandSender sender, String string) {
 		sender.sendMessage(debugPrefix() + string);
+	}
+	
+	public static void sendMessage(CommandSender sender, String message, boolean prefix) {
+		if (prefix) {
+			sender.sendMessage(ARCommand.formatColors(getPrefix() + message));
+		} else {
+			sender.sendMessage(ARCommand.formatColors(message));
+		}
+	}
+	
+	public static String getPrefix() {
+		return ChatColor.translateAlternateColorCodes('&', Manager.getConfig().getString("Settings.Language.ChatPrefix"));
 	}
 
 	public static String debugPrefix() {
