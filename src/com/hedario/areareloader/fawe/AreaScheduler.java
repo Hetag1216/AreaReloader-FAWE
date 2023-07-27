@@ -155,7 +155,7 @@ public class AreaScheduler {
 				if (notifyOnReload) {
 					for (Player ops : Bukkit.getServer().getOnlinePlayers()) {
 						if (ops.isOp() || ops.hasPermission("areareloader.command.admin")) {
-							ops.sendMessage(AreaLoader.prefix() + "Automatically reloading area: " + ChatColor.YELLOW + scheduler.getArea() + ChatColor.GOLD + ".");
+							ops.sendMessage(AreaMethods.getPrefix() + "Automatically reloading area: " + ChatColor.YELLOW + scheduler.getArea() + ChatColor.GOLD + ".");
 							ops.getWorld().playSound(ops.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1F, 0.3F);
 						}
 					}
