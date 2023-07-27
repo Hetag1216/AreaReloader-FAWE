@@ -3,81 +3,61 @@ package com.hedario.areareloader.fawe.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.hedario.areareloader.fawe.AreaMethods;
+import com.hedario.areareloader.fawe.TPManager;
 import com.hedario.areareloader.fawe.configuration.Manager;
-import com.hedario.areareloader.fawe.effects.ParticleEffect;
 
 public class LocationCommand extends ARCommand {
-
 	public LocationCommand() {
-		super("location", "/ar location <set|teleport", "Sets a safe location where players will be tped on load", new String[] {"location", "loc"});
+		super("location", "/ar location <set|teleport", Manager.getConfig().getString("Commands.Location.Description"), new String[] {"location", "loc"});
 	}
 
 	@Override
 	public void execute(CommandSender sender, List<String> args) {
-		if (!hasPermission(sender)) {
+		if (!hasPermission(sender) || this.correctLength(sender, args.size(), 2, 2)) {
 			return;
 		}
 		final String area = args.get(0);
 		if (!AreaMethods.areaExist(area)) {
-			this.sendMessage(sender, "area doesn't exist", true);
+			this.sendMessage(sender, invalidArea(), true);
 			return;
 		}
 		if (args.get(1).equalsIgnoreCase("set")) {
-			// sets the "safe location" of the area to the config and registers it
 			final Location location = ((Player) sender).getLocation();
 			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Enabled", true);
 			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.World", location.getWorld().getName());
-			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.X", location.getX());
-			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Y", location.getY());
-			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Z", location.getZ());
+			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.X", (int) location.getX());
+			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Y", (int) location.getY());
+			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Z", (int) location.getZ());
+			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Settings.Speed", AreaMethods.getAreaChunk(area));
+			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Settings.Interval", 500);
 			Manager.areas.saveConfig();
+			this.sendMessage(sender, onSet().replace("%area%", area), true);
 		} else if (args.get(1).equalsIgnoreCase("teleport")) {
-			// teleports the player to the saved location
 			if (sender instanceof Player) {
-				((Player) sender).teleport(getSafeLocation(area));
+				((Player) sender).teleport(TPManager.getSafeLocation(area));
 			}
+			this.sendMessage(sender, onTeleport().replace("%area%", area), true);
 		} else {
 			return;
 		}
 	}
 	
-	public static void teleportPlayers(final String area) {
-		final int ix = AreaMethods.getAreaX(area);
-		final int iy = AreaMethods.getAreaY(area);
-		final int iz = AreaMethods.getAreaZ(area);
-		final int jx = AreaMethods.getAreaMaxX(area);
-		final int jy = AreaMethods.getAreaMaxY(area);
-		final int jz = AreaMethods.getAreaMaxZ(area);
-
-		for (double x = ix; x <= jx; x++) {
-			for (double y = iy; y <= jy; y++) {
-				for (double z = iz; z <= jz; z++) {
-					final Location loc = new Location(getSafeLocation(area).getWorld(), x, y, z);
-					ParticleEffect.CLOUD.display(loc.clone().add(0, 0.5F, 0));
-					for (Entity entities : getSafeLocation(area).getWorld().getNearbyEntities(loc, 1, 1, 1, target -> target instanceof Player)) {
-						entities.teleport(getSafeLocation(area));
-					}
-				}
-			}
-		}
+	private String onSet() {
+		return Manager.getConfig().getString("Commands.Location.Set");
 	}
 	
-	public static Location getSafeLocation(final String area) {
-		World world = Bukkit.getWorld(Manager.areas.getConfig().getString("Areas." + area + ".SafeLocation.World"));
-		double sx = Manager.areas.getConfig().getDouble("Areas." + area + ".SafeLocation.X");
-		double sy = Manager.areas.getConfig().getDouble("Areas." + area + ".SafeLocation.Y");
-		double sz = Manager.areas.getConfig().getDouble("Areas." + area + ".SafeLocation.Z");
-		return new Location(world, sx, sy, sz);
+	private String onTeleport() {
+		return Manager.getConfig().getString("Commands.Location.Teleport");
 	}
 	
+	private String invalidArea() {
+		return Manager.getConfig().getString("Commands.Location.InvalidArea");
+	}
 	@Override
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
 		List<String> list = new ArrayList<String>();
