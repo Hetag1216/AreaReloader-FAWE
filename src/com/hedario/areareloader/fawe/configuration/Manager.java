@@ -93,6 +93,7 @@ public class Manager {
 
 		config.addDefault("Commands.Load.Description", "&7Loads an existing area.");
 		config.addDefault("Commands.Load.Preparing", "Preparing to load &e%area%&6.");
+		config.addDefault("Commands.Load.Process", "Loading of &e%area%&6 at &e%perc%&6%.");
 		config.addDefault("Commands.Load.Success", "Area &e%area%&6 was succesfully loaded in &e%time%&e.");
 		config.addDefault("Commands.Load.Fail", "&e%area%&6 has failed to load! Error has been traced and sent to console, enable debug for a more accurate description.");
 		config.addDefault("Commands.Load.InvalidArea", "&e%area% &6does not exist.");
@@ -113,6 +114,11 @@ public class Manager {
 		config.addDefault("Commands.Cancel.Fail", "&e%area% &6is not currently being loaded.");
 		config.addDefault("Commands.Cancel.CancelAll", "All areas have been cancelled from loading!");
 		config.addDefault("Commands.Cancel.NoAreasLoading", "Nothing happened, no areas were being loaded.");
+		
+		config.addDefault("Commands.Location.Description", "&7Customise and set a safe location for players to be teleported to when they're inside an area being loaded.");
+		config.addDefault("Commands.Location.Set", "Safe location has been set correctly for &e%area%&6!");
+		config.addDefault("Commands.Location.Teleport", "You've been teleported to the safe location for &e%area%&6!");
+		config.addDefault("Commands.Location.InvalidArea", "&e%area% &6does not exist.");
 		
 		config.addDefault("Config.Version", 1.0);
 		defaultConfig.saveConfig();
