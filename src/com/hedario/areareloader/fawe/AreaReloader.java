@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.hedario.areareloader.fawe.commands.ARCommand;
 import com.hedario.areareloader.fawe.commands.Executor;
 import com.hedario.areareloader.fawe.configuration.Manager;
 import com.hedario.areareloader.fawe.reflection.AreaProtocol;
@@ -73,8 +74,9 @@ public class AreaReloader extends JavaPlugin implements Listener {
 		// AreaScheduler setup
 		AreaScheduler.init();
 		
-		// Instantiate events listener
-		new ARListener(this);
+		// Instantiate events
+		getServer().getPluginManager().registerEvents(new AreaListener(this), this);
+		new AreaListener(this);
 
 		try {
 			new Executor(this);
@@ -83,7 +85,7 @@ public class AreaReloader extends JavaPlugin implements Listener {
 			e.printStackTrace();
 		}
 		
-		getServer().getPluginManager().registerEvents(new AreaListener(this), this);
+		
 		if (updater) {
 			checkForUpdates();
 		}
@@ -104,7 +106,7 @@ public class AreaReloader extends JavaPlugin implements Listener {
 				public void run() {
 					for (Player players : getServer().getOnlinePlayers()) {
 						if (players.hasPermission("areareloader.*") || players.isOp()) {
-							players.sendMessage(AreaLoader.prefix() + "AreaReloader is brought to you freely, if you wish to support the project, please consider making a donation!");
+							players.sendMessage(AreaMethods.getPrefix() + "AreaReloader is brought to you freely, if you wish to support the project, please consider making a donation!");
 						}
 					}
 				}
