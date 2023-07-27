@@ -9,7 +9,7 @@ public class AreaLoadEvent extends Event implements Cancellable {
 	public static final HandlerList handlers = new HandlerList();
 	private final String area;
 	private final Player player;
-	private boolean cancelled;
+	private boolean cancelled = false;
 
 	public AreaLoadEvent(final String area) {
 		this.area = area;
@@ -23,6 +23,10 @@ public class AreaLoadEvent extends Event implements Cancellable {
 
 	@Override
 	public HandlerList getHandlers() {
+		return handlers;
+	}
+	
+	public static HandlerList getHandlerList() {
 		return handlers;
 	}
 
