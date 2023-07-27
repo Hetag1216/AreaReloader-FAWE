@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.hedario.areareloader.fawe.AreaLoader;
 import com.hedario.areareloader.fawe.AreaMethods;
 import com.hedario.areareloader.fawe.AreaReloader;
+import com.hedario.areareloader.fawe.AreaScheduler;
 import com.hedario.areareloader.fawe.configuration.Manager;
 
 public class CancelCommand extends ARCommand {
@@ -26,10 +28,21 @@ public class CancelCommand extends ARCommand {
 			if (input.equalsIgnoreCase("all")) {
 				if (!AreaReloader.getInstance().getQueue().get().isEmpty()) {
 					AreaReloader.getInstance().getServer().getScheduler().cancelTasks(AreaReloader.getInstance());
+					for (BukkitTask tasks : AreaReloader.getInstance().getServer().getScheduler().getPendingTasks()) {
+						tasks.cancel();
+					}
 					AreaLoader.areas.clear();
 					AreaReloader.getInstance().getQueue().get().clear();
 					if (!DisplayCommand.entries.isEmpty()) {
 						DisplayCommand.removeAllDisplays();
+					}
+					AreaScheduler.init();
+					if (AreaReloader.checker) {
+						AreaScheduler.checkForAreas();
+						AreaScheduler.manageTimings();
+						if (AreaScheduler.getAreas() != null) {
+							AreaScheduler.updateDelay(AreaScheduler.getAreas(), AreaScheduler.getAreasResetTime());
+						}
 					}
 				} else {
 					this.sendMessage(sender, noAreas(), true);
