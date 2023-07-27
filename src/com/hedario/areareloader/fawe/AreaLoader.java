@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
@@ -42,11 +41,17 @@ public class AreaLoader {
 				Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
 			}
 			if (getSender() != null)
-				getSender().sendMessage(prefix() + "Area '" + ChatColor.YELLOW + area + ChatColor.GOLD + "' is already being loaded.");
+				AreaMethods.sendMessage(getSender(), alreadyLoading().replace("%area%", area), true);
 			return;
 		}
-		
-		this.setArea(area);
+		if (sender != null) {
+			this.sender = sender;
+			Bukkit.getServer().getPluginManager().callEvent(new AreaLoadEvent(((Player) sender), area));
+		} else {
+			Bukkit.getServer().getPluginManager().callEvent(new AreaLoadEvent(area));
+		}
+		AreaMethods.sendMessage(sender, prepare().replace("%area%", area), true);
+		this.area = area;
 		this.maxX = x;
 		this.maxZ = z;
 		this.size = 16;
@@ -59,16 +64,6 @@ public class AreaLoader {
 		time = System.currentTimeMillis();
 		areas.add(this);
 		manage();
-		if (getSender() != null) {
-			this.sender = sender;
-			if (getSender() instanceof Player) {
-				Bukkit.getServer().getPluginManager().callEvent(new AreaLoadEvent((Player) sender, area));
-				getSender().sendMessage("AL");
-			}
-		} else {
-			Bukkit.getServer().getPluginManager().callEvent(new AreaLoadEvent(area));
-			Bukkit.broadcastMessage("AL2");
-		}
 	}
 	
 	public static void init() {
@@ -112,16 +107,6 @@ public class AreaLoader {
 
 	private void complete() {
 		this.completed = true;
-		if (getSender() != null) {
-			if (getSender() instanceof Player) {
-				((Player) sender).getWorld().playSound(((Player) sender).getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.3F);
-				Bukkit.getServer().getPluginManager().callEvent(new AreaCompleteEvent(((Player) sender), area));
-				getSender().sendMessage("CC");
-			}
-		} else {
-			Bukkit.getServer().getPluginManager().callEvent(new AreaCompleteEvent(area));
-			Bukkit.broadcastMessage("CC2");
-		}
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
 			player.getWorld().playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.3F);
@@ -134,7 +119,8 @@ public class AreaLoader {
 			if (al.completed) {
 				if ((al.sender != null)) {
 					final long time = System.currentTimeMillis() - fakeTime;
-					al.sender.sendMessage(prefix() + success().replace("%area%", al.getArea()).replace("%time%", AreaMethods.formatTime(time)));
+					AreaMethods.sendMessage(al.sender, success().replace("%area%", al.getArea()).replace("%time%", AreaMethods.formatTime(time)), true);
+					Bukkit.getServer().getPluginManager().callEvent(new AreaCompleteEvent(((Player) al.getSender()), al.getArea()));
 				}
 				completed.add(al);
 				// remove the area from the queue and cancel its running task.
@@ -150,7 +136,7 @@ public class AreaLoader {
 					al.progress();
 				} catch (WorldEditException | IOException e) {
 					if (al.sender != null) {
-						al.sender.sendMessage(prefix() + fail().replace("%area%", al.getArea()));
+						AreaMethods.sendMessage(al.sender, fail().replace("%area%", al.getArea()), true);
 					}
 					Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Loading -=-=-=-=-=-=-=-=-=-=-");
 					Manager.printDebug("An error has occurred while loading area: " + al.getArea());
@@ -163,7 +149,7 @@ public class AreaLoader {
 				al.curr_perc = (float) (al.chunks * 100.0D / al.maxChunks);
 					if ((Math.round(perc) % percentage == 0L) && (Math.round(perc) % 100L != 0L) && (al.sender != null)) {
 						if (!al.sent && Math.round(perc) % percentage == 0L) {
-							al.sender.sendMessage(prefix() + "Loading area '" + ChatColor.YELLOW + al.getArea() + ChatColor.GOLD + "' " + ChatColor.YELLOW + perc + "%" + ChatColor.GOLD + ".");
+							AreaMethods.sendMessage(al.sender, process().replace("%area%", al.getArea()).replace("%perc%", String.valueOf(perc)), true);
 							al.sent = true;
 						}
 					}
@@ -188,17 +174,25 @@ public class AreaLoader {
 		};
 		executer.runTaskTimer(AreaReloader.getInstance(), 0, interval / 1000 * 20);
 	}
-
-	public static String prefix() {
-		return ChatColor.translateAlternateColorCodes('&', AreaReloader.plugin.getConfig().getString("Settings.Language.ChatPrefix"));
+	
+	public static String alreadyLoading() {
+		return Manager.getConfig().getString("Commands.Load.AlreadyLoading");
+	}
+	
+	public static String process() {
+		return Manager.getConfig().getString("Commands.Load.Process");
+	}
+	
+	public static String prepare() {
+		return Manager.getConfig().getString("Commands.Load.Preparing");
 	}
 
 	private static String success() {
-		return ChatColor.translateAlternateColorCodes('&', AreaReloader.plugin.getConfig().getString("Commands.Load.Success"));
+		return Manager.getConfig().getString("Commands.Load.Success");
 	}
 	
 	private static String fail() {
-		return ChatColor.translateAlternateColorCodes('&', AreaReloader.plugin.getConfig().getString("Commands.Load.Fail"));
+		return Manager.getConfig().getString("Commands.Load.Fail");
 	}
 	
 	public static void reset(String area) {
