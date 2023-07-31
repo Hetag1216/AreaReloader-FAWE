@@ -37,7 +37,7 @@ public class InfoCommand extends ARCommand {
 		sendMessage(sender, "&6World &7» &e" + AreaMethods.getAreaInWorld(area), false);
 		sendMessage(sender, "&6First corner &7» &e" + AreaMethods.getAreaX(area) + "&7, &e" + AreaMethods.getAreaY(area) + "&7, &e" + AreaMethods.getAreaZ(area), false);
 		sendMessage(sender, "&6Second corner &7» &e" + AreaMethods.getAreaMaxX(area) + "&7, &e" + AreaMethods.getAreaMaxY(area) + "&7, &e" + AreaMethods.getAreaMaxZ(area), false);
-		sendMessage(sender, "&6Interval &7» &6" + (AreaMethods.isGlobalInterval(area) ? AreaMethods.getInterval(area) + " &7(&eGLOBAL&7)" : AreaMethods.getInterval(area)), false);
+		sendMessage(sender, "&6Interval &7» &6" + (AreaMethods.isGlobalInterval(area) ? AreaMethods.formatTime(AreaMethods.getInterval(area)) + " &7(&eGLOBAL&7)" : AreaMethods.formatTime(AreaMethods.getInterval(area))), false);
 		
 		if (Manager.getAreasConfig().getBoolean("Areas." + area + ".SafeLocation.Enabled")) {
 			World world = Bukkit.getWorld(Manager.getAreasConfig().getString("Areas." + area + ".SafeLocation.World"));
@@ -60,8 +60,8 @@ public class InfoCommand extends ARCommand {
 		}
 		sendMessage(sender, "&6Is automatically reloading &7» &e" + Manager.getAreasConfig().getBoolean("Areas." + area + ".AutoReload.Enabled"), false);
 		if (Manager.getAreasConfig().getBoolean("Areas." + area + ".AutoReload.Enabled") == true) {
-			sendMessage(sender, "&6Auto reloading time &7» &e" 	+ Manager.getAreasConfig().getLong("Areas." + area + ".AutoReload.Time"), false);
-			sendMessage(sender, "&6Next auto reload in &7» &e" + AreaScheduler.getRemainingTime(area), false);
+			sendMessage(sender, "&6Auto reloading time &7» &e" 	+ AreaMethods.formatTime(Manager.getAreasConfig().getLong("Areas." + area + ".AutoReload.Time")), false);
+			sendMessage(sender, "&6Next auto reload in &7» &e" + AreaMethods.formatTime(AreaScheduler.getRemainingTime(area)), false);
 		}
 		return;
 	}
