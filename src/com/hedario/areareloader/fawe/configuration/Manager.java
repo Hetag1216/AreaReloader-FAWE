@@ -17,12 +17,17 @@ import com.hedario.areareloader.fawe.commands.Executor;
 public class Manager {
 	public static Config defaultConfig;
 	public static Config areas;
+	private double version = 1.1;
 
 	public Manager() {
 		initConfigs();
 		loadConfig(defaultConfig);
 		loadConfig(areas);
 		setDebug();
+		
+		if (getConfig().getDouble("Config.Version") < version || getAreasConfig().getDouble("Config.Version") < version) {
+			AreaReloader.getInstance().getLogger().warning("You're currently using an older configuration version, it's highly recommended to reset/update your configuration files!");
+		}
 	}
 	
 	public void initConfigs() {
@@ -40,22 +45,17 @@ public class Manager {
 		config.addDefault("Settings.Language.MustBePlayer", "You must be a player to use this command!");
 		
 		config.addDefault("Settings.Debug.Enabled", false);
-		
 		config.addDefault("Settings.Updater.Enabled", true);
-		
 		config.addDefault("Settings.Metrics.Enabled", true);
-		
 		config.addDefault("Settings.Announcer.Enabled", true);
 		
-		config.addDefault("Settings.AreaLoading.Interval", 500);
+		config.addDefault("Settings.AreaLoading.GlobalInterval", 500);
 		config.addDefault("Settings.AreaLoading.FastMode", true);
 		config.addDefault("Settings.AreaLoading.Percentage", 15);
 		
 		config.addDefault("Settings.AutoReload.Checker", true);
-		config.addDefault("Settings.AutoReload.Interval", 200);
 		config.addDefault("Settings.AutoReload.Notify.Admins", true);
 		config.addDefault("Settings.AutoReload.Notify.Console", true);
-		
 
 		ArrayList<String> helpLines = new ArrayList<>();
 		Executor.help = helpLines;
@@ -64,9 +64,9 @@ public class Manager {
 		config.addDefault("Commands.Help.Description", "Shows information about a command.");
 		config.addDefault("Commands.Help.InvalidTopic", "&7Please specify a valid topic.");
 		config.addDefault("Commands.Help.ProperUsage", "&6Proper usage: &e&o");
-		
 
 		config.addDefault("Commands.Create.Description", "&7Creates a new area.");
+		config.addDefault("Commands.Create.Asynchronously", false);
 		config.addDefault("Commands.Create.Preparing", "Preparing to create &e%area%&6...");
 		config.addDefault("Commands.Create.Success", "&e%area%&6 has been succesfully created.");
 		config.addDefault("Commands.Create.Failure", "Failed to create new area &e%area%&6.");
@@ -97,7 +97,8 @@ public class Manager {
 		config.addDefault("Commands.Load.Success", "Area &e%area%&6 was succesfully loaded in &e%time%&e.");
 		config.addDefault("Commands.Load.Fail", "&e%area%&6 has failed to load! Error has been traced and sent to console, enable debug for a more accurate description.");
 		config.addDefault("Commands.Load.InvalidArea", "&e%area% &6does not exist.");
-		config.addDefault("Commands.Load.AlreadyLoading", "e%area%&6 is already queued and being loaded!");
+		config.addDefault("Commands.Load.AlreadyLoading", "&e%area%&6 is already queued and being loaded!");
+		config.addDefault("Commands.Load.StillCreating", "&e%area%&6 is still being created.");
 
 		config.addDefault("Commands.Version.Description", "&7Shows information about the plugin.");
 		
@@ -120,20 +121,24 @@ public class Manager {
 		config.addDefault("Commands.Location.Teleport", "You've been teleported to the safe location for &e%area%&6!");
 		config.addDefault("Commands.Location.InvalidArea", "&e%area% &6does not exist.");
 		
-		config.addDefault("Config.Version", 1.0);
+		config.addDefault("Config.Version", version);
 		defaultConfig.saveConfig();
 		} else if (configurationFile == areas) {
 			config = areas.getConfig();
 			
-			config.addDefault("Config.Version", 1.0);
+			config.addDefault("Config.Version", version);
 		}
 	}
 
 	public static FileConfiguration getConfig() {
 		return defaultConfig.getConfig();
 	}
+	
+	public static FileConfiguration getAreasConfig() {
+		return areas.getConfig();
+	}
 
-	public static void reloadAllInstances() {
+	public static void reloadConfigurations() {
 		defaultConfig.reloadConfig();
 		areas.reloadConfig();
 	}
@@ -190,7 +195,7 @@ public class Manager {
 			printDebug("" + e.getMessage());
 			printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
 			if (sender != null)
-				AreaMethods.sendDebugMessage(sender, "An error has been generated and registered to the debugs file.");
+				AreaMethods.sendMessage(sender, "An error has been generated and registered to the debugs file.", true);
 			else
 				AreaReloader.log.warning("An error has been generated and registered to the debug's file.");
 		}
