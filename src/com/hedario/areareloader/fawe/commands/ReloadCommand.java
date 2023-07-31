@@ -19,6 +19,7 @@ public class ReloadCommand extends ARCommand {
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 1)) {
 			return;
 		}
+
 		try {
 			Manager.resetDebug();
 			DisplayCommand.removeAllDisplays();
@@ -27,8 +28,6 @@ public class ReloadCommand extends ARCommand {
 			AreaScheduler.init();
 			new Executor(AreaReloader.getInstance());
 			if (AreaReloader.checker) {
-				AreaScheduler.checkForAreas();
-				AreaScheduler.manageTimings();
 				if (AreaScheduler.getAreas() != null) {
 					AreaScheduler.updateDelay(AreaScheduler.getAreas(), AreaScheduler.getAreasResetTime());
 				}
@@ -38,7 +37,6 @@ public class ReloadCommand extends ARCommand {
 			sendMessage(sender, fail(), true);
 			Manager.printDebug(this.getName(), e, sender);
 		}
-
 	}
 
 	private String success() {
