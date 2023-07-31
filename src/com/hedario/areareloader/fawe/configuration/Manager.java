@@ -17,14 +17,17 @@ import com.hedario.areareloader.fawe.commands.Executor;
 public class Manager {
 	public static Config defaultConfig;
 	public static Config areas;
-	private double version = 1.1;
+	private static double version = 1.1;
 
 	public Manager() {
 		initConfigs();
 		loadConfig(defaultConfig);
 		loadConfig(areas);
 		setDebug();
-		
+		checkVersion();
+	}
+	
+	private static void checkVersion() {
 		if (getConfig().getDouble("Config.Version") < version || getAreasConfig().getDouble("Config.Version") < version) {
 			AreaReloader.getInstance().getLogger().warning("You're currently using an older configuration version, it's highly recommended to reset/update your configuration files!");
 		}
@@ -68,7 +71,7 @@ public class Manager {
 		config.addDefault("Commands.Create.Description", "&7Creates a new area.");
 		config.addDefault("Commands.Create.Asynchronously", false);
 		config.addDefault("Commands.Create.Preparing", "Preparing to create &e%area%&6...");
-		config.addDefault("Commands.Create.Success", "&e%area%&6 has been succesfully created.");
+		config.addDefault("Commands.Create.Success", "&e%area%&6 has been succesfully created. Use the command &e/ar location &6to set a safe location for players inside the area whenever it loads!");
 		config.addDefault("Commands.Create.Failure", "Failed to create new area &e%area%&6.");
 		config.addDefault("Commands.Create.AlreadyExists", "An area with the name of &e%area%&6 already exists, please choose a different name!");
 		config.addDefault("Commands.Create.InvalidValue", "You must select a value: &etrue&7/&efalse");
@@ -141,6 +144,7 @@ public class Manager {
 	public static void reloadConfigurations() {
 		defaultConfig.reloadConfig();
 		areas.reloadConfig();
+		checkVersion();
 	}
 
 	public static void setDebug() {
