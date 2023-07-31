@@ -12,8 +12,8 @@ public class HelpCommand extends ARCommand {
 	private String invalidTopic;
 
 	public HelpCommand() {
-		super("help", "/ar help <Page/Topic>", formatColors("Commands.Help.Description"), new String[] { "help", "h" });
-		this.invalidTopic = formatColors(Manager.getConfig().getString("Commands.Help.InvalidTopic"));
+		super("help", "/ar help <Page/Topic>", Manager.getConfig().getString("Commands.Help.Description"), new String[] { "help", "h" });
+		this.invalidTopic = Manager.getConfig().getString("Commands.Help.InvalidTopic");
 	}
 
 	public void execute(CommandSender sender, List<String> args) {
@@ -60,5 +60,17 @@ public class HelpCommand extends ARCommand {
 		} else {
 			this.sendMessage(sender, invalidTopic, false);
 		}
+	}
+
+	@Override
+	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
+		List<String> list = new ArrayList<String>();
+		if (!sender.hasPermission("areareloader.command.help")) {
+			return new ArrayList<String>();
+		}
+		for (String commands : instances.keySet()) {
+			list.add(commands);
+		}
+		return list;
 	}
 }
