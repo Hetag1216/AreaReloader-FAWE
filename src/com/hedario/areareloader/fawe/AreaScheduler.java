@@ -32,6 +32,9 @@ public class AreaScheduler {
 	}
 	
 	public static void init() {
+		if (areas != null && !areas.isEmpty()) {
+			areas.clear();
+		}
 		checker = Manager.getConfig().getBoolean("Settings.AutoReload.Checker");
 		notifyOnReload = Manager.getConfig().getBoolean("Settings.AutoReload.Notify.Admins");
 		notifyConsoleOnReload = Manager.getConfig().getBoolean("Settings.AutoReload.Notify.Console");
