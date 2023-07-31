@@ -14,7 +14,7 @@ import com.hedario.areareloader.fawe.configuration.Manager;
 
 public class CancelCommand extends ARCommand {
 	public CancelCommand() {
-		super("cancel", "/ar cancel <area, ALL>", formatColors(Manager.getConfig().getString("Commands.Cancel.Description")), new String[] { "cancel", "c" });
+		super("cancel", "/ar cancel <area, ALL>", Manager.getConfig().getString("Commands.Cancel.Description"), new String[] { "cancel", "c" });
 
 	}
 
@@ -26,33 +26,33 @@ public class CancelCommand extends ARCommand {
 		String input = args.get(0);
 		try {
 			if (input.equalsIgnoreCase("all")) {
-				if (!AreaReloader.getInstance().getQueue().get().isEmpty()) {
-					AreaReloader.getInstance().getServer().getScheduler().cancelTasks(AreaReloader.getInstance());
-					for (BukkitTask tasks : AreaReloader.getInstance().getServer().getScheduler().getPendingTasks()) {
-						tasks.cancel();
-					}
-					AreaLoader.areas.clear();
-					AreaReloader.getInstance().getQueue().get().clear();
-					if (!DisplayCommand.entries.isEmpty()) {
-						DisplayCommand.removeAllDisplays();
-					}
-					AreaScheduler.init();
-					if (AreaReloader.checker) {
-						AreaScheduler.checkForAreas();
-						AreaScheduler.manageTimings();
-						if (AreaScheduler.getAreas() != null) {
-							AreaScheduler.updateDelay(AreaScheduler.getAreas(), AreaScheduler.getAreasResetTime());
-						}
-					}
-				} else {
+				if (AreaReloader.getQueue().get().isEmpty()) {
 					this.sendMessage(sender, noAreas(), true);
 					return;
 				}
+				AreaReloader.getInstance().getServer().getScheduler().cancelTasks(AreaReloader.getInstance());
+				for (BukkitTask tasks : AreaReloader.getInstance().getServer().getScheduler().getPendingTasks()) {
+					tasks.cancel();
+				}
+				AreaLoader.areas.clear();
+				AreaReloader.getQueue().get().clear();
+				if (!DisplayCommand.entries.isEmpty()) {
+					DisplayCommand.removeAllDisplays();
+				}
+				AreaScheduler.init();
+				if (AreaReloader.checker) {
+					AreaScheduler.checkForAreas();
+					AreaScheduler.manageTimings();
+					if (AreaScheduler.getAreas() != null) {
+						AreaScheduler.updateDelay(AreaScheduler.getAreas(), AreaScheduler.getAreasResetTime());
+					}
+				}
+
 				this.sendMessage(sender, cancelAll(), true);
 				return;
 			} else {
-				if (AreaReloader.getInstance().getQueue().isQueued(input)) {
-					this.sendMessage(sender, success().replace("%area%", input).replace("%id%", String.valueOf(AreaReloader.getInstance().getQueue().getTaskByName(input))), true);
+				if (AreaReloader.getQueue().isQueued(input)) {
+					this.sendMessage(sender, success().replace("%area%", input).replace("%id%", String.valueOf(AreaReloader.getQueue().getTaskByName(input))), true);
 					AreaMethods.kill(input);
 					return;
 				} else {
@@ -64,23 +64,23 @@ public class CancelCommand extends ARCommand {
 			Manager.printDebug(this.getName(), e, sender);
 		}
 	}
-	
+
 	private String noAreas() {
-		return formatColors(Manager.getConfig().getString("Commands.Cancel.NoAreasLoading"));
+		return Manager.getConfig().getString("Commands.Cancel.NoAreasLoading");
 	}
 
 	private String success() {
-		return formatColors(Manager.getConfig().getString("Commands.Cancel.Success"));
+		return Manager.getConfig().getString("Commands.Cancel.Success");
 	}
 
 	private String fail() {
-		return formatColors(Manager.getConfig().getString("Commands.Cancel.Fail"));
+		return Manager.getConfig().getString("Commands.Cancel.Fail");
 	}
 
 	private String cancelAll() {
-		return formatColors(Manager.getConfig().getString("Commands.Cancel.CancelAll"));
+		return Manager.getConfig().getString("Commands.Cancel.CancelAll");
 	}
-	
+
 	@Override
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
 		List<String> list = new ArrayList<String>();
