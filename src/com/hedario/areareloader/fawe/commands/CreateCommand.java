@@ -3,6 +3,7 @@ package com.hedario.areareloader.fawe.commands;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -53,13 +54,16 @@ public class CreateCommand extends ARCommand {
 				@Override
 				public void run() {
 					sendMessage(sender, preparing().replaceAll("%area%", area), true);
+					Player player = (Player) sender;
 					if (AreaMethods.createNewArea((Player) sender, args.get(0), 16, skipE, skipB)) {
 						sendMessage(sender, success().replaceAll("%area%", area), true);
+						player.getWorld().playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.3F);
 						if (AreaMethods.isAsyncCreation && AreaMethods.creations.contains(area)) {
 							AreaMethods.creations.remove(area);
 						}
 					} else {
 						sendMessage(sender, fail().replaceAll("%area%", area), true);
+						player.getWorld().playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 0.5F);
 					}
 				}
 			};
@@ -120,5 +124,4 @@ public class CreateCommand extends ARCommand {
 		}
 		return list;
 	}
-
 }
