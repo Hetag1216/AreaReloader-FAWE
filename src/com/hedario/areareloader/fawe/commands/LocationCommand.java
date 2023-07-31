@@ -13,19 +13,21 @@ import com.hedario.areareloader.fawe.configuration.Manager;
 
 public class LocationCommand extends ARCommand {
 	public LocationCommand() {
-		super("location", "/ar location <set|teleport", Manager.getConfig().getString("Commands.Location.Description"), new String[] {"location", "loc"});
+		super("location", "/ar location <set|teleport>", Manager.getConfig().getString("Commands.Location.Description"), new String[] {"location", "loc"});
 	}
 
 	@Override
 	public void execute(CommandSender sender, List<String> args) {
-		if (!hasPermission(sender) || this.correctLength(sender, args.size(), 2, 2)) {
+		if (!hasPermission(sender) || !this.correctLength(sender, args.size(), 2, 2)) {
 			return;
 		}
+		
 		final String area = args.get(0);
 		if (!AreaMethods.areaExist(area)) {
 			this.sendMessage(sender, invalidArea(), true);
 			return;
 		}
+		
 		if (args.get(1).equalsIgnoreCase("set")) {
 			final Location location = ((Player) sender).getLocation();
 			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Enabled", true);
@@ -33,7 +35,7 @@ public class LocationCommand extends ARCommand {
 			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.X", (int) location.getX());
 			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Y", (int) location.getY());
 			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Z", (int) location.getZ());
-			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Settings.Speed", AreaMethods.getAreaChunk(area));
+			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Settings.Speed", (AreaMethods.getAreaChunk(area) > 7 ? 7 : AreaMethods.getAreaChunk(area)));
 			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Settings.Interval", 500);
 			Manager.areas.saveConfig();
 			this.sendMessage(sender, onSet().replace("%area%", area), true);
@@ -58,6 +60,7 @@ public class LocationCommand extends ARCommand {
 	private String invalidArea() {
 		return Manager.getConfig().getString("Commands.Location.InvalidArea");
 	}
+	
 	@Override
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
 		List<String> list = new ArrayList<String>();
@@ -73,5 +76,4 @@ public class LocationCommand extends ARCommand {
 		}
 		return list;
 	}
-
 }

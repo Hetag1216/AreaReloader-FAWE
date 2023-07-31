@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.hedario.areareloader.fawe.configuration.Manager;
-import com.hedario.areareloader.fawe.effects.ParticleEffect;
 
 public class TPManager {
 	private String area;
@@ -36,7 +35,7 @@ public class TPManager {
 		this.maxY = Math.max(iy, jy);
 		this.maxZ = Math.max(iz, jz);
 
-		maxIts = (getSpeed(area) >= 100 ? getSpeed(area) / 2 : getSpeed(area));
+		maxIts = getSpeed(area);
 		process = true;
 		handler.put(area, this);
 		manage(area);
@@ -55,7 +54,6 @@ public class TPManager {
 							for (int y = instance.getY(); y <= instance.getMaxY() && instance.isProcess(); y++) {
 								final World world = Bukkit.getWorld(AreaMethods.getAreaInWorld(areaName));
 								final Location loc = new Location(world, x, y, z);
-								ParticleEffect.CLOUD.display(loc);
 								for (Entity entity : world.getNearbyEntities(loc, 1, 1, 1, target -> target instanceof Player)) {
 									Location safeLocation = getSafeLocation(areaName);
 									entity.teleport(safeLocation);
@@ -64,7 +62,6 @@ public class TPManager {
 						}
 						it++;
 						if (it >= instance.getMaxIts()) {
-							Bukkit.broadcastMessage("max count has been met, rescheduling");
 							instance.setX(++x);
 							instance.setProcess(false);
 							this.cancel();
@@ -73,7 +70,6 @@ public class TPManager {
 						}
 					}
 					handler.remove(areaName);
-					Bukkit.broadcastMessage("Area has been iterated entirely");
 					this.cancel();
 				}
 			}.runTask(AreaReloader.getInstance());
