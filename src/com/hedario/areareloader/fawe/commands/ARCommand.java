@@ -56,9 +56,9 @@ public abstract class ARCommand implements SubCommand {
 	}
 
 	public void help(CommandSender sender, boolean description) {
-		sender.sendMessage(getProperUsage());
+		sendMessage(sender, getProperUsage(), false);
 		if (description) {
-			sender.sendMessage(ChatColor.GRAY + this.description);
+			sendMessage(sender, this.getDescription(), false);
 		}
 	}
 	public static String formatColors(String string) {
@@ -79,7 +79,7 @@ public abstract class ARCommand implements SubCommand {
 		if (sender.hasPermission("areareloader.command." + this.name)) {
 			return true;
 		}
-		sender.sendMessage(prefix + this.noPermissionMessage);
+		sendMessage(sender, this.noPermissionMessage, true);
 		return false;
 	}
 
@@ -87,7 +87,7 @@ public abstract class ARCommand implements SubCommand {
 		if (sender.hasPermission("areareloader.command." + this.name + "." + extra)) {
 			return true;
 		}
-		sender.sendMessage(prefix + this.noPermissionMessage);
+		sendMessage(sender, this.noPermissionMessage, true);
 		return false;
 	}
 
@@ -103,7 +103,7 @@ public abstract class ARCommand implements SubCommand {
 		if ((sender instanceof Player)) {
 			return true;
 		}
-		sender.sendMessage(prefix + this.mustBePlayerMessage);
+		sendMessage(sender, this.mustBePlayerMessage, true);
 		return false;
 	}
 
@@ -142,7 +142,7 @@ public abstract class ARCommand implements SubCommand {
 	 * @return the proper usage of the command
 	 */
 	protected String getProperUsage() {
-		return prefix + ChatColor.translateAlternateColorCodes('&', Manager.getConfig().getString("Commands.Help.ProperUsage")) + getProperUse();
+		return prefix + Manager.getConfig().getString("Commands.Help.ProperUsage") + getProperUse();
 	}
 
 	protected List<String> getPage(List<String> entries, int page, boolean sort) {

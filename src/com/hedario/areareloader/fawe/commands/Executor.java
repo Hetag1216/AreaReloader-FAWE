@@ -34,7 +34,7 @@ public class Executor {
 		new HookCommand();
 		new InfoCommand();
 		new DisplayCommand();
-		new ConfigReloadCommand();
+		new ReloadCommand();
 		new DisplayCommand();
 		new CancelCommand();
 		new LocationCommand();

@@ -14,7 +14,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class ListCommand extends ARCommand {
 	public ListCommand() {
-		super("list", "/ar list", ChatColor.translateAlternateColorCodes('&', Manager.getConfig().getString("Commands.List.Description")), new String[] { "list" });
+		super("list", "/ar list", Manager.getConfig().getString("Commands.List.Description"), new String[] { "list" });
 	}
 
 	@Override
@@ -36,11 +36,10 @@ public class ListCommand extends ARCommand {
 			Collections.sort(strings);
 			Collections.reverse(strings);
 			for (String formatted : getPage(strings, 1, true)) {
-				if (AreaReloader.getInstance().getQueue().isQueued(formatted)) {
+				if (AreaReloader.getQueue().isQueued(formatted)) {
 					formatted = formatted + " (Being loaded)";
 				}
 				sendMessage(sender, "&e " + formatted, false);
-				
 			}
 			return;
 		} else if (args.size() == 1) {
@@ -57,7 +56,7 @@ public class ListCommand extends ARCommand {
 					return;
 				}
 				for (String formatted : getPage(strings, Integer.valueOf(arg), true)) {
-					if (AreaReloader.getInstance().getQueue().isQueued(formatted)) {
+					if (AreaReloader.getQueue().isQueued(formatted)) {
 						formatted = formatted + " (Being loaded)";
 					}
 					sendMessage(sender, "&e" + formatted, false);

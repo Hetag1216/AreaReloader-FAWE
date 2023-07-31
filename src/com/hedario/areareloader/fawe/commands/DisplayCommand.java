@@ -20,8 +20,6 @@ import com.hedario.areareloader.fawe.AreaReloader;
 import com.hedario.areareloader.fawe.configuration.Manager;
 import com.hedario.areareloader.fawe.effects.ParticleEffect;
 
-import net.md_5.bungee.api.ChatColor;
-
 public class DisplayCommand extends ARCommand {
 
 	public long pDelay;
@@ -32,7 +30,7 @@ public class DisplayCommand extends ARCommand {
 	public BukkitRunnable runnable;
 
 	public DisplayCommand() {
-		super("display", "/ar display <area>", ChatColor.translateAlternateColorCodes('&', Manager.getConfig().getString("Commands.Display.Description")), new String[] { "display", "d" });
+		super("display", "/ar display <area>", Manager.getConfig().getString("Commands.Display.Description"), new String[] { "display", "d" });	
 		pDelay = Manager.getConfig().getLong("Commands.Display.ParticleDelay");
 		ef = Manager.getConfig().getString("Commands.Display.ParticleEffect");
 	}
@@ -42,7 +40,7 @@ public class DisplayCommand extends ARCommand {
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 1, 1) && !isPlayer(sender)) {
 			return;
 		}
-
+		
 		String area = args.get(0);
 		if (Manager.areas.getConfig().contains("Areas." + area)) {
 			if (!entries.containsKey(area)) {
@@ -155,11 +153,11 @@ public class DisplayCommand extends ARCommand {
 	}
 	
 	public static String displayArea() {
-		return formatColors(Manager.getConfig().getString("Commands.Display.Display"));
+		return Manager.getConfig().getString("Commands.Display.Display");
 	}
 	
 	public static String removeDisplay() {
-		return formatColors(Manager.getConfig().getString("Commands.Display.RemoveDisplay"));
+		return Manager.getConfig().getString("Commands.Display.RemoveDisplay");
 	}
 	
 	public boolean useParticles() {

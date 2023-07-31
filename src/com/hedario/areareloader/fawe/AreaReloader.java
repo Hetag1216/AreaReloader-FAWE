@@ -30,11 +30,9 @@ public class AreaReloader extends JavaPlugin implements Listener {
 	public static WorldEditPlugin fawe;
 	public static AreaProtocol ap;
 	public static boolean debug, checker;
-	private Queue queue;
-	private boolean updater;
-	private boolean useMetrics;
-	private boolean announcer;
-
+	private static Queue queue;
+	private boolean updater, useMetrics, announcer;
+	
 	public void onEnable() {
 		PluginManager pm = Bukkit.getPluginManager();
 		if ((WorldEditPlugin) getServer().getPluginManager().getPlugin("FastAsyncWorldEdit") == null) {
@@ -167,7 +165,7 @@ public class AreaReloader extends JavaPlugin implements Listener {
 	 * Returns class utility instance.
 	 * @return queue.class
 	 */
-	public Queue getQueue() {
+	public static Queue getQueue() {
 		return queue;
 	}
 	

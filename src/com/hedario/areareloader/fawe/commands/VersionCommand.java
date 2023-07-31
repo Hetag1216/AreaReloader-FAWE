@@ -7,11 +7,9 @@ import org.bukkit.command.CommandSender;
 import com.hedario.areareloader.fawe.AreaReloader;
 import com.hedario.areareloader.fawe.configuration.Manager;
 
-import net.md_5.bungee.api.ChatColor;
-
 public class VersionCommand extends ARCommand {
 	public VersionCommand() {
-		super("version", "/ar version", ChatColor.translateAlternateColorCodes('&', Manager.getConfig().getString("Commands.Version.Description")), new String[] { "version", "v" });
+		super("version", "/ar version", Manager.getConfig().getString("Commands.Version.Description"), new String[] { "version", "v" });
 	}
 
 	@Override

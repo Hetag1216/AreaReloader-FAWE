@@ -37,6 +37,8 @@ import com.sk89q.worldedit.regions.Region;
 public class AreaMethods {
 	static AreaReloader plugin;
 	public static boolean fastMode = Manager.getConfig().getBoolean("Settings.AreaLoading.FastMode");
+	public static List<String> creations;
+	public static boolean isAsyncCreation = false;
 	
 	public static void performSetup() {
 		File areas = new File(AreaReloader.plugin.getDataFolder() + File.separator + "Areas");
@@ -47,11 +49,15 @@ public class AreaMethods {
 				e.printStackTrace();
 			}
 		}
+		if (Manager.getConfig().getBoolean("Commands.Create.Asynchronously")) {
+			creations = new ArrayList<String>();
+			isAsyncCreation = true;
+		}
 	}
 
 	public static void deleteArea(String area) {
 		kill(area);
-		Manager.areas.getConfig().set("Areas." + area, null);
+		Manager.getAreasConfig().set("Areas." + area, null);
 		Manager.areas.saveConfig();
 		File dir = new File(AreaReloader.plugin.getDataFolder() + File.separator + "Areas" + File.separator + area);
 		if (dir.exists()) {
@@ -72,35 +78,6 @@ public class AreaMethods {
 		return isInteger(s, 10);
 	}
 	
-	/*public static String formatTime(long time) {
-		time = Math.abs(time);
-		final long days = time / TimeUnit.DAYS.toMillis(1);
-		final long hours = time % TimeUnit.DAYS.toMillis(1) / TimeUnit.HOURS.toMillis(1);
-		final long minutes = time % TimeUnit.HOURS.toMillis(1) / TimeUnit.MINUTES.toMillis(1);
-		final long seconds = time % TimeUnit.MINUTES.toMillis(1) / TimeUnit.SECONDS.toMillis(1);
-		final long millis = time / TimeUnit.MILLISECONDS.toMillis(1);
-		String format = "";
-		String t = "";
-		if (days > 0) {
-			format += String.valueOf(days) + ":";
-			t = "days";
-		}
-		if (hours > 0) {
-			format += String.valueOf(hours) + ":";
-			t = "hours";
-		}
-		if (minutes > 0) {
-			format += String.valueOf(minutes) + ":";
-			t = "minutes";
-		}
-		if (seconds >= 0) {
-			t = "seconds";
-			format += String.valueOf(seconds) + "." + String.valueOf(Math.round(millis)).substring(0, 2);
-		}
-		
-		return format + " " + t;
-	}*/
-	
 	/**
 	 * Formats time from milliseconds to: <b>days, hours, minutes, seconds</b>
 	 * @param time must be in milliseconds
@@ -116,16 +93,16 @@ public class AreaMethods {
 		final long minutes = TimeUnit.MILLISECONDS.toMinutes(time) % 60;
 		final long seconds = TimeUnit.MILLISECONDS.toSeconds(time) % 60;
 		if (days > 0) 
-			result += String.valueOf(days) + "days ";
+			result += String.valueOf(days) + " days ";
 		if (hours > 0)
-			result += String.valueOf(hours) + "hours ";
+			result += String.valueOf(hours) + " hours ";
 		if (minutes > 0) 
-			result += String.valueOf(minutes) + "minutes ";
+			result += String.valueOf(minutes) + " minutes ";
 		if (seconds >= 0) {
 			if (time > 0) {
-				result += String.valueOf(seconds) + "." + (String.valueOf(time).length() > 2 ? String.valueOf(time).substring(0, 1) : String.valueOf(time)) + "s";
+				result += String.valueOf(seconds) + "." + (String.valueOf(time).length() > 2 ? String.valueOf(time).substring(0, 1) : String.valueOf(time)) + " seconds";
 			} else {
-				result += String.valueOf(seconds) + "s";
+				result += String.valueOf(seconds) + " seconds";
 			}
 		}
 		return result;
@@ -211,120 +188,116 @@ public class AreaMethods {
 			}
 			dir.delete();
 		}
+
 		BukkitPlayer lp = BukkitAdapter.adapt(player);
 		LocalSession ls = WorldEdit.getInstance().getSessionManager().get(lp);
 		Region sel = ls.getSelection(BukkitAdapter.adapt(player.getWorld()));
 		int maxX = 0;
 		int maxZ = 0;
-		if ((sel instanceof CuboidRegion)) {
-			int curX = 0;
-			BlockVector3 min = sel.getMinimumPoint();
-			BlockVector3 max = sel.getMaximumPoint();
-			Manager.areas.getConfig().set("Areas." + area + ".World", sel.getWorld().getName());
-			Manager.areas.getConfig().set("Areas." + area + ".HasCopiedEntities", copyEntities);
-			Manager.areas.getConfig().set("Areas." + area + ".HasCopiedBiomes", copyBiomes);
-			Manager.areas.getConfig().set("Areas." + area + ".Minimum.X", min.getBlockX());
-			Manager.areas.getConfig().set("Areas." + area + ".Minimum.Y", min.getBlockY());
-			Manager.areas.getConfig().set("Areas." + area + ".Minimum.Z", min.getBlockZ());
-			Manager.areas.getConfig().set("Areas." + area + ".Maximum.Z", max.getBlockZ());
-			Manager.areas.getConfig().set("Areas." + area + ".Maximum.Y", max.getBlockY());
-			Manager.areas.getConfig().set("Areas." + area + ".Maximum.X", max.getBlockX());
-			Manager.areas.saveConfig();
-			for (int x = min.getBlockX(); x <= max.getBlockX(); x += size) {
-				int curZ = 0;
-				for (int z = min.getBlockZ(); z <= max.getBlockZ(); z += size) {
-					EditSession extent = WorldEdit.getInstance().newEditSessionBuilder().world(sel.getWorld())
-							.fastMode(fastMode)
-						    .combineStages(true)
-						    .changeSetNull()
-						    .checkMemory(false)
-						    .allowedRegionsEverywhere()
-						    .limitUnlimited()
-						    .build();
-					int maxY = max.getBlockY();
-					Location pt1 = new Location(player.getWorld(), x, min.getBlockY(), z);
-					Location pt2 = new Location(player.getWorld(), x + getMaxInt(x, max.getBlockX(), size).intValue(), maxY, z + getMaxInt(z, max.getBlockZ(), size).intValue());
-
-					BlockVector3 bvmin = BukkitAdapter.asBlockVector(pt1);
-					BlockVector3 bvmax = BukkitAdapter.asBlockVector(pt2);
-					CuboidRegion region = new CuboidRegion(sel.getWorld(), bvmin, bvmax);
-
-					BlockArrayClipboard cc = new BlockArrayClipboard(region);
-					ForwardExtentCopy clipCopy = new ForwardExtentCopy(extent, region, cc, region.getMinimumPoint());
-					clipCopy.setCopyingEntities(copyEntities);
-					clipCopy.setCopyingBiomes(copyBiomes);
-					Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Creation -=-=-=-=-=-=-=-=-=-=-");	
-					Manager.printDebug("Area: " + area);
-					try {
-						Operations.completeLegacy(clipCopy);
-						Manager.printDebug("Succesfully copied the selected clipboard to system.");
-					} catch (Exception e) {
-						e.printStackTrace();
-						Manager.printDebug("An error has occurred when coping the selected clipboard!");
-						Manager.printDebug(e.getMessage());
-					}
-					File file = new File(AreaReloader.plugin.getDataFolder() + File.separator + "Areas" + File.separator + area + File.separator + getFileName(area, curX, curZ) + ".schem");
-					if (file.exists()) {
-						file.delete();
-					}
-					if (!file.getParentFile().exists()) {
-						file.getParentFile().mkdirs();
-						Manager.printDebug("Creating Areas' files directory.");
-					}
-					if (!file.exists()) {
-						try {
-							file.createNewFile();
-							Manager.printDebug("Saving to file the selected clipboard.");
-						} catch (IOException e) {
-							e.printStackTrace();
-							Manager.printDebug("An error has occurred when saving to clipboard area: " + file.getName());
-							Manager.printDebug(e.getMessage());
-						}
-					}
-					try (ClipboardWriter writer = BuiltInClipboardFormat.FAST.getWriter(new FileOutputStream(file))) {
-						writer.write(cc);
-						Manager.printDebug("The clipboard was succesfully saved to file.");
-					} catch (FileNotFoundException e) {
-						Manager.printDebug("FileNotFoundException: Something went wrong while writing the schematic file:");
-						Manager.printDebug(e.getMessage());
-						e.printStackTrace();
-					} catch (IOException e) {
-						Manager.printDebug("IOException: Something went wrong while writing the schematic file:");
-						Manager.printDebug(e.getMessage());
-						e.printStackTrace();
-					}
-					Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
-					Manager.printDebug("");
-					curZ++;
-					maxZ = curZ;
-				}
-				curX++;
-				maxX = curX;
-			}
-			maxX--;
-			maxZ--;
-			Manager.areas.getConfig().set("Areas." + area + ".Size.X", maxX);
-			Manager.areas.getConfig().set("Areas." + area + ".Size.Z", maxZ);
-			Manager.areas.getConfig().set("Areas." + area + ".Size.Chunk", (maxX * maxZ > 0 ? maxX * maxZ : 1));
-			Manager.areas.getConfig().set("Areas." + area + ".AutoReload.Enabled", false);
-			Manager.areas.getConfig().set("Areas." + area + ".AutoReload.Time", 200000);
-			Manager.areas.saveConfig();
-			return true;
+		if (!(sel instanceof CuboidRegion)) {
+			return false;
 		}
-		return false;
+		int curX = 0;
+		BlockVector3 min = sel.getMinimumPoint();
+		BlockVector3 max = sel.getMaximumPoint();
+		Manager.getAreasConfig().set("Areas." + area + ".World", sel.getWorld().getName());
+		Manager.getAreasConfig().set("Areas." + area + ".HasCopiedEntities", copyEntities);
+		Manager.getAreasConfig().set("Areas." + area + ".HasCopiedBiomes", copyBiomes);
+		Manager.getAreasConfig().set("Areas." + area + ".Minimum.X", min.getBlockX());
+		Manager.getAreasConfig().set("Areas." + area + ".Minimum.Y", min.getBlockY());
+		Manager.getAreasConfig().set("Areas." + area + ".Minimum.Z", min.getBlockZ());
+		Manager.getAreasConfig().set("Areas." + area + ".Maximum.Z", max.getBlockZ());
+		Manager.getAreasConfig().set("Areas." + area + ".Maximum.Y", max.getBlockY());
+		Manager.getAreasConfig().set("Areas." + area + ".Maximum.X", max.getBlockX());
+		Manager.areas.saveConfig();
+		for (int x = min.getBlockX(); x <= max.getBlockX(); x += size) {
+			int curZ = 0;
+			for (int z = min.getBlockZ(); z <= max.getBlockZ(); z += size) {
+				EditSession extent = WorldEdit.getInstance().newEditSessionBuilder().world(sel.getWorld()).fastMode(fastMode).combineStages(true).changeSetNull().checkMemory(false).allowedRegionsEverywhere().limitUnlimited().build();
+				Location pt1 = new Location(player.getWorld(), x, min.getBlockY(), z);
+				Location pt2 = new Location(player.getWorld(), x + getMaxInt(x, max.getBlockX(), size), max.getBlockY(), z + getMaxInt(z, max.getBlockZ(), size));
+
+				BlockVector3 bvmin = BukkitAdapter.asBlockVector(pt1);
+				BlockVector3 bvmax = BukkitAdapter.asBlockVector(pt2);
+				CuboidRegion region = new CuboidRegion(sel.getWorld(), bvmin, bvmax);
+
+				BlockArrayClipboard cc = new BlockArrayClipboard(region);
+				ForwardExtentCopy clipCopy = new ForwardExtentCopy(extent, region, cc, region.getMinimumPoint());
+				clipCopy.setCopyingEntities(copyEntities);
+				clipCopy.setCopyingBiomes(copyBiomes);
+				Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Creation -=-=-=-=-=-=-=-=-=-=-");
+				Manager.printDebug("Area: " + area);
+				try {
+					Operations.completeLegacy(clipCopy);
+					Manager.printDebug("Succesfully copied the selected clipboard to system.");
+				} catch (Exception e) {
+					e.printStackTrace();
+					Manager.printDebug("An error has occurred when coping the selected clipboard!");
+					Manager.printDebug(e.getMessage());
+				}
+				File file = new File(AreaReloader.plugin.getDataFolder() + File.separator + "Areas" + File.separator + area + File.separator + getFileName(area, curX, curZ) + ".schem");
+				if (file.exists()) {
+					file.delete();
+				}
+				if (!file.getParentFile().exists()) {
+					file.getParentFile().mkdirs();
+					Manager.printDebug("Creating Areas' files directory.");
+				}
+				if (!file.exists()) {
+					try {
+						file.createNewFile();
+						Manager.printDebug("Saving to file the selected clipboard.");
+					} catch (IOException e) {
+						e.printStackTrace();
+						Manager.printDebug("An error has occurred when saving to clipboard area: " + file.getName());
+						Manager.printDebug(e.getMessage());
+					}
+				}
+				try (ClipboardWriter writer = BuiltInClipboardFormat.FAST.getWriter(new FileOutputStream(file))) {
+					writer.write(cc);
+					Manager.printDebug("The clipboard was succesfully saved to file.");
+				} catch (FileNotFoundException e) {
+					Manager.printDebug("FileNotFoundException: Something went wrong while writing the schematic file:");
+					Manager.printDebug(e.getMessage());
+					e.printStackTrace();
+				} catch (IOException e) {
+					Manager.printDebug("IOException: Something went wrong while writing the schematic file:");
+					Manager.printDebug(e.getMessage());
+					e.printStackTrace();
+				}
+				Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
+				Manager.printDebug("");
+				curZ++;
+				maxZ = curZ;
+			}
+			curX++;
+			maxX = curX;
+		}
+		maxX--;
+		maxZ--;
+		Manager.getAreasConfig().set("Areas." + area + ".Size.X", maxX);
+		Manager.getAreasConfig().set("Areas." + area + ".Size.Z", maxZ);
+		Manager.getAreasConfig().set("Areas." + area + ".Size.Chunk", (maxX * maxZ > 0 ? maxX * maxZ : 1));
+		Manager.getAreasConfig().set("Areas." + area + ".Loading.Interval.Global", true);
+		Manager.getAreasConfig().set("Areas." + area + ".Loading.Interval.Time", 200);
+		Manager.getAreasConfig().set("Areas." + area + ".AutoReload.Enabled", false);
+		Manager.getAreasConfig().set("Areas." + area + ".AutoReload.Time", 200000);
+		Manager.areas.saveConfig();
+		return true;
 	}
 	
 	public static void kill(String area) {
 		Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Killing -=-=-=-=-=-=-=-=-=-=-");
 		Manager.printDebug("Area: " + area);
-		if (AreaReloader.getInstance().getQueue().isQueued(area)) {
-			AreaReloader.getInstance().getQueue().remove(area, AreaReloader.getInstance().getQueue().getTaskByName(area));
+		if (AreaReloader.getQueue().isQueued(area)) {
+			AreaReloader.getInstance().getServer().getScheduler().cancelTask(AreaReloader.getQueue().getTaskByName(area));
+			AreaLoader.reset(area);
+			AreaReloader.getQueue().remove(area, AreaReloader.getQueue().getTaskByName(area));
 			Manager.printDebug("Killed area's execution.");
 		}
 		if (DisplayCommand.isDisplaying(area)) {
 			DisplayCommand.remove(area, null);
 		}
-		AreaLoader.reset(area);
 		Manager.printDebug("Removed from the loading instances.");
 		Manager.printDebug("Removed from the automatic loading instances.");
 		Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
@@ -333,8 +306,8 @@ public class AreaMethods {
 	
 	public static List<String> getAreas() {
 		List<String> areas = new ArrayList<String>();
-		if (Manager.areas.getConfig().contains("Areas")) {
-			for (String keys : Manager.areas.getConfig().getConfigurationSection("Areas").getKeys(false)) {
+		if (Manager.getAreasConfig().contains("Areas")) {
+			for (String keys : Manager.getAreasConfig().getConfigurationSection("Areas").getKeys(false)) {
 				areas.add(keys);
 			}
 		}
@@ -342,25 +315,28 @@ public class AreaMethods {
 	}
 	
 	public static boolean areaExist(final String area) {
-		if (Manager.areas.getConfig().contains("Areas." + area)) {
+		if (Manager.getAreasConfig().contains("Areas." + area)) {
 			return true;
 		}
 		return false;
 	}
 	
-	public static String getXCoord(String area) {
-		return Manager.areas.getConfig().getString("Areas." + area + ".Minimum.X");
-	}
-	public static String getYCoord(String area) {
-		return Manager.areas.getConfig().getString("Areas." + area + ".Minimum.Y");
+	public static long getGlobalInterval() {
+		return Manager.getConfig().getLong("Settings.AreaLoading.GlobalInterval");
 	}
 	
-	public static String getZCoord(String area) {
-		return Manager.areas.getConfig().getString("Areas." + area + ".Minimum.Z");
+	public static boolean isGlobalInterval(String area) {
+		return Manager.getAreasConfig().getBoolean("Areas." + area + ".Loading.Interval.Global");
+	}
+	
+	public static long getInterval(String area) {
+		if (!isGlobalInterval(area))
+			return Manager.getAreasConfig().getLong("Areas." + area + ".Loading.Interval.Time");
+		return getGlobalInterval();
 	}
 	
 	public static String getAreaInWorld(String area) {
-		return Manager.areas.getConfig().getString("Areas." + area + ".World");
+		return Manager.getAreasConfig().getString("Areas." + area + ".World");
 	}
 	
 	public static World getWorld(String area) {
@@ -372,51 +348,43 @@ public class AreaMethods {
 	}
 
 	public static Integer getAreaSizeX(String area) {
-		return Manager.areas.getConfig().getInt("Areas." + area + ".Size.X");
+		return Manager.getAreasConfig().getInt("Areas." + area + ".Size.X");
 	}
 
 	public static Integer getAreaSizeZ(String area) {
-		return Manager.areas.getConfig().getInt("Areas." + area + ".Size.Z");
+		return Manager.getAreasConfig().getInt("Areas." + area + ".Size.Z");
 	}
 	
 	public static Integer getAreaMaxX(String area) {
-		return Manager.areas.getConfig().getInt("Areas." + area + ".Maximum.X");
+		return Manager.getAreasConfig().getInt("Areas." + area + ".Maximum.X");
 	}
 	
 	public static Integer getAreaMaxY(String area) {
-		return Manager.areas.getConfig().getInt("Areas." + area + ".Maximum.Y");
+		return Manager.getAreasConfig().getInt("Areas." + area + ".Maximum.Y");
 	}
 	
 	public static Integer getAreaMaxZ(String area) {
-		return Manager.areas.getConfig().getInt("Areas." + area + ".Maximum.Z");
+		return Manager.getAreasConfig().getInt("Areas." + area + ".Maximum.Z");
 	}
 	
 	public static Integer getAreaX(String area) {
-		return Manager.areas.getConfig().getInt("Areas." + area + ".Minimum.X");
+		return Manager.getAreasConfig().getInt("Areas." + area + ".Minimum.X");
 	}
 	
 	public static Integer getAreaY(String area) {
-		return Manager.areas.getConfig().getInt("Areas." + area + ".Minimum.Y");
+		return Manager.getAreasConfig().getInt("Areas." + area + ".Minimum.Y");
 	}
 	
 	public static Integer getAreaZ(String area) {
-		return Manager.areas.getConfig().getInt("Areas." + area + ".Minimum.Z");
+		return Manager.getAreasConfig().getInt("Areas." + area + ".Minimum.Z");
 	}
 
 	public static Integer getAreaChunk(String area) {
-		return Manager.areas.getConfig().getInt("Areas." + area + ".Size.Chunk");
+		return Manager.getAreasConfig().getInt("Areas." + area + ".Size.Chunk");
 	}
 
 	public static void reloadConfig() {
 		AreaReloader.plugin.reloadConfig();
-	}
-	
-	public static void sendDebugMessage(Player player, String string) {
-		player.sendMessage(debugPrefix() + string);
-	}
-
-	public static void sendDebugMessage(CommandSender sender, String string) {
-		sender.sendMessage(debugPrefix() + string);
 	}
 	
 	public static void sendMessage(CommandSender sender, String message, boolean prefix) {
@@ -429,9 +397,5 @@ public class AreaMethods {
 	
 	public static String getPrefix() {
 		return ChatColor.translateAlternateColorCodes('&', Manager.getConfig().getString("Settings.Language.ChatPrefix"));
-	}
-
-	public static String debugPrefix() {
-		return ChatColor.translateAlternateColorCodes('&', AreaReloader.plugin.getConfig().getString("Settings.Debug.Prefix"));
 	}
 }

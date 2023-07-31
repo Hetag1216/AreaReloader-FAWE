@@ -10,7 +10,7 @@ import com.hedario.areareloader.fawe.configuration.Manager;
 
 public class DeleteCommand extends ARCommand {
 	public DeleteCommand() {
-		super("delete", "/ar delete <name>", formatColors(Manager.getConfig().getString("Commands.Delete.Description")), new String[] { "delete" });
+		super("delete", "/ar delete <name>", Manager.getConfig().getString("Commands.Delete.Description"), new String[] { "delete" });
 	}
 
 	@Override
@@ -36,11 +36,11 @@ public class DeleteCommand extends ARCommand {
 	}
 
 	private String success() {
-		return formatColors(Manager.getConfig().getString("Commands.Delete.Success"));
+		return Manager.getConfig().getString("Commands.Delete.Success");
 	}
 
 	private String invalidArea() {
-		return formatColors(Manager.getConfig().getString("Commands.Delete.InvalidArea"));
+		return Manager.getConfig().getString("Commands.Delete.InvalidArea");
 	}
 	@Override
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
