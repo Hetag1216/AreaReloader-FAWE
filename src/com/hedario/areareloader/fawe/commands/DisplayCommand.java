@@ -47,8 +47,8 @@ public class DisplayCommand extends ARCommand {
 				display(area, sender);
 				sendMessage(sender, displayArea().replace("%area%", area), true);
 			} else {
-				remove(area, sender);
 				sendMessage(sender, removeDisplay().replace("%area%", area), true);
+				remove(area, sender);
 			}
 		} else {
 			sendMessage(sender, LoadCommand.invalidArea().replaceAll("%area%", area), true);
