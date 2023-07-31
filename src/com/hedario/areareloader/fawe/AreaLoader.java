@@ -26,15 +26,13 @@ public class AreaLoader {
 	private boolean completed = false;
 	private CommandSender sender;
 	private static long fakeTime;
-	private static long interval;
 	public static double percentage;
 	public long time;
-	public static BukkitRunnable executer;
 	private boolean sent = false;
 	private float curr_perc;
 
 	public AreaLoader(String area, int x, int z, int size, Location location, CommandSender sender) {
-		if (AreaReloader.getInstance().getQueue().isQueued(area) || areas.contains(this)) {
+		if (AreaReloader.getQueue().isQueued(area) || areas.contains(this)) {
 			if (AreaReloader.debug) {
 				Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Loading -=-=-=-=-=-=-=-=-=-=-");
 				Manager.printDebug(area + " is already in the queue, it may be currently loading.");
@@ -44,13 +42,18 @@ public class AreaLoader {
 				AreaMethods.sendMessage(getSender(), alreadyLoading().replace("%area%", area), true);
 			return;
 		}
+		if (AreaMethods.isAsyncCreation && AreaMethods.creations.contains(area)) {
+			AreaMethods.sendMessage(sender, stillCreating().replace("%area%", area), true);
+			return;
+		}
 		if (sender != null) {
 			this.sender = sender;
+			AreaMethods.sendMessage(sender, prepare().replace("%area%", area), true);
 			Bukkit.getServer().getPluginManager().callEvent(new AreaLoadEvent(((Player) sender), area));
 		} else {
 			Bukkit.getServer().getPluginManager().callEvent(new AreaLoadEvent(area));
 		}
-		AreaMethods.sendMessage(sender, prepare().replace("%area%", area), true);
+		
 		this.area = area;
 		this.maxX = x;
 		this.maxZ = z;
@@ -67,7 +70,6 @@ public class AreaLoader {
 	}
 	
 	public static void init() {
-		interval = Manager.getConfig().getLong("Settings.AreaLoading.Interval");
 		percentage = Manager.getConfig().getDouble("Settings.AreaLoading.Percentage");
 	}
 
@@ -83,25 +85,20 @@ public class AreaLoader {
 			}
 			return;
 		} else {
-			if (AreaMethods.fastMode) {
+			if (System.currentTimeMillis() >= time + AreaMethods.getInterval(getArea())) {
 				chunks += 1;
 				z += 1;
-			} else {
-				if (System.currentTimeMillis() >= time + interval) {
-					chunks += 1;
-					z += 1;
-					time = System.currentTimeMillis();
+				time = System.currentTimeMillis();
+				if (z > this.maxZ) {
+					z = 0;
+					x += 1;
 				}
 			}
-		}
-		if (z > this.maxZ) {
-			z = 0;
-			x += 1;
-		}
-		if (chunks == this.maxChunks) {
-			z -= 1;
-			complete();
-			return;
+			if (chunks == this.maxChunks) {
+				z -= 1;
+				complete();
+				return;
+			}
 		}
 	}
 
@@ -124,10 +121,10 @@ public class AreaLoader {
 				}
 				completed.add(al);
 				// remove the area from the queue and cancel its running task.
-				if (AreaReloader.getInstance().getQueue().isQueued(al.getArea())) {
-					AreaReloader.getInstance().getQueue().remove(al.getArea(), AreaReloader.getInstance().getQueue().getTaskByName(al.getArea()));
+				if (AreaReloader.getQueue().isQueued(al.getArea())) {
+					AreaReloader.getQueue().remove(al.getArea(), AreaReloader.getQueue().getTaskByName(al.getArea()));
 					Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Loading -=-=-=-=-=-=-=-=-=-=-");
-					Manager.printDebug("Area: " + al.getArea() + " with task id " + AreaReloader.getInstance().getQueue().getTaskByName(al.getArea()) + " has been removed from the queue list.");
+					Manager.printDebug("Area: " + al.getArea() + " with task id " + AreaReloader.getQueue().getTaskByName(al.getArea()) + " has been removed from the queue list.");
 					Manager.printDebug(al.getArea() + " has succesfully been removed from the active sessions.");
 					Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
 				}
@@ -162,17 +159,20 @@ public class AreaLoader {
 			areas.remove(l);
 		}
 	}
-	
+
 	private void manage() {
-		executer = new BukkitRunnable() {
+		new BukkitRunnable() {
+			@Override
 			public void run() {
-				if (!AreaReloader.getInstance().getQueue().isQueued(getArea())) {
-					AreaReloader.getInstance().getQueue().add(getArea(), this.getTaskId());
+				if (!AreaReloader.getQueue().isQueued(getArea())) {
+					AreaReloader.getQueue().add(getArea(), this.getTaskId());
 				}
 				progressAll();
+				if (areas.isEmpty()) {
+					this.cancel();
+				}
 			}
-		};
-		executer.runTaskTimer(AreaReloader.getInstance(), 0, interval / 1000 * 20);
+		}.runTaskTimer(AreaReloader.getInstance(), 0, 0);
 	}
 	
 	public static String alreadyLoading() {
@@ -195,22 +195,28 @@ public class AreaLoader {
 		return Manager.getConfig().getString("Commands.Load.Fail");
 	}
 	
-	public static void reset(String area) {
-		for (AreaLoader al : areas) {
-			if (al.getArea().contains(area)) {
-				areas.remove(al);
-				break;
-			}
-		}
+	private static String stillCreating() {
+		return Manager.getConfig().getString("Commands.Load.StillCreating");
 	}
-	
+
+	public static void reset(String area) {
+		if (isInstance(area))
+			areas.remove(get(area));
+	}
+
 	public static boolean isInstance(String area) {
-		for (AreaLoader al : areas) {
-			if (al.getArea().contains(area)) {
-				return true;
-			}
-		}
+		if (get(area).getArea().contains(area))
+			return true;
+
 		return false;
+	}
+
+	public static AreaLoader get(String area) {
+		for (AreaLoader al : areas) {
+			if (al.getArea().contains(area))
+				return al;
+		}
+		return null;
 	}
 
 	/**
