@@ -9,7 +9,7 @@ import com.hedario.areareloader.fawe.configuration.Manager;
 
 public class HookCommand extends ARCommand {
 	public HookCommand() {
-		super("hook", "/ar hook", formatColors(Manager.getConfig().getString("Commands.Hook.Description")), new String[] { "hook", "hooks" });
+		super("hook", "/ar hook", Manager.getConfig().getString("Commands.Hook.Description"), new String[] { "hook", "hooks" });
 	}
 
 	@Override
@@ -17,7 +17,7 @@ public class HookCommand extends ARCommand {
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 1)) {
 			return;
 		}
-		sendMessage(sender, "&6-=-=-=-= « &6 Hooks &7» &6=-=-=-=-", false);
+		sendMessage(sender, "&6-=-=-=-= &7« &6 Hooks &7» &6=-=-=-=-", false);
 		sendMessage(sender, "&7- &eFastAsyncWorldEdit &7(&eFAWE&7)", false);
 		sendMessage(sender, AreaReloader.plugin.getStatus(), false);
 		if (AreaReloader.getWEInstance() != null) {
