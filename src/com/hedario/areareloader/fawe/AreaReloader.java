@@ -83,7 +83,6 @@ public class AreaReloader extends JavaPlugin implements Listener {
 			e.printStackTrace();
 		}
 		
-		
 		if (updater) {
 			checkForUpdates();
 		}
