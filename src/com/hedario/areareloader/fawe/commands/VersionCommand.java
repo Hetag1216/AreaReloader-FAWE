@@ -21,8 +21,8 @@ public class VersionCommand extends ARCommand {
 		sendMessage(sender, "&6Version &7» &e" + AreaReloader.plugin.getDescription().getVersion(), false);
 		sendMessage(sender, "&6API version &7» &e" + AreaReloader.plugin.getDescription().getAPIVersion(), false);
 		sendMessage(sender, "&6Author &7» &e" + AreaReloader.plugin.getDescription().getAuthors().toString().replace("[", "").toString().replace("]", ""), false);
-		sendMessage(sender, "&6Compatible Minecraft Version(s) &7» &e1.16.5, 1.17.1, 1.18.2, 1.19, 1.19.1, 1.19.2", false);
-		sendMessage(sender, "&6AreaRelaoder-FAWE's dependency &7» &e" + AreaReloader.plugin.getDescription().getDepend().toString().replace("[", "").toString().replace("]", ""), false);
+		sendMessage(sender, "&6Compatible Minecraft Version(s) &7» &e1.17.1, 1.18.2, 1.19.4, 1.20, 1.20.1", false);
+		sendMessage(sender, "&6AreaReloader-FAWE's dependency &7» &e" + AreaReloader.plugin.getDescription().getDepend().toString().replace("[", "").toString().replace("]", ""), false);
 		sendMessage(sender, "&6AreaReloader-FAWE's Java requirements &7» &e Java 16+", false);
 		sendMessage(sender, "&6System Java version &7» &e" + System.getProperty("java.version"), false);
 		sendMessage(sender, "", false);
