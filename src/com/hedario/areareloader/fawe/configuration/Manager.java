@@ -43,7 +43,7 @@ public class Manager {
 		if (configurationFile == defaultConfig) {
 			config = defaultConfig.getConfig();
 
-		config.addDefault("Settings.Language.ChatPrefix", "&8[&6AreaReloader&8]&6 ");
+		config.addDefault("Settings.Language.ChatPrefix", "&8[&6AreaReloader-FAWE&8]&6 ");
 		config.addDefault("Settings.Language.NoPermission", "You dont own sufficent permissions to run this command!");
 		config.addDefault("Settings.Language.MustBePlayer", "You must be a player to use this command!");
 		
@@ -197,6 +197,9 @@ public class Manager {
 			printDebug("Writing debugs trace...");
 			printDebug("");
 			printDebug("" + e.getMessage());
+			for (int i = 0; i < e.getStackTrace().length; i++) {
+				printDebug("" + e.getStackTrace()[i]);
+			}
 			printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
 			if (sender != null)
 				AreaMethods.sendMessage(sender, "An error has been generated and registered to the debugs file.", true);
