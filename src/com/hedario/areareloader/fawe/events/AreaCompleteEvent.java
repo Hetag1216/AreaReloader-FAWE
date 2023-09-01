@@ -1,6 +1,6 @@
 package com.hedario.areareloader.fawe.events;
 
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -8,16 +8,16 @@ import org.bukkit.event.HandlerList;
 public class AreaCompleteEvent extends Event implements Cancellable {
 	public static final HandlerList handlers = new HandlerList();
 	private final String area;
-	private final Player player;
+	private final CommandSender sender;
 	private boolean cancelled = false;
 
 	public AreaCompleteEvent(final String area) {
 		this.area = area;
-		player = null;
+		sender = null;
 	}
 
-	public AreaCompleteEvent(final Player player, final String area) {
-		this.player = player;
+	public AreaCompleteEvent(final CommandSender sender, final String area) {
+		this.sender = sender;
 		this.area = area;
 	}
 
@@ -31,10 +31,10 @@ public class AreaCompleteEvent extends Event implements Cancellable {
 	}
 
 	/**
-	 * @return the player
+	 * @return the sender
 	 */
-	public Player getPlayer() {
-		return player;
+	public CommandSender getPlayer() {
+		return sender;
 	}
 
 	/**
