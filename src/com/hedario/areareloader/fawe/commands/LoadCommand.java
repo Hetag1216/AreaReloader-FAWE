@@ -26,17 +26,17 @@ public class LoadCommand extends ARCommand {
 			if (!AreaReloader.getQueue().isQueued(area)) {
 			Location location = new Location(AreaMethods.getWorld(area), AreaMethods.getAreaX(area), AreaMethods.getAreaY(area), AreaMethods.getAreaZ(area));
 			new AreaLoader(area, AreaMethods.getAreaSizeX(area), AreaMethods.getAreaSizeZ(area), AreaMethods.getAreaChunk(area), location, sender);
-			sendMessage(sender, prepare().replaceAll("%area%", area), true);
+			sendMessage(sender, prepare().replace("%area%", area), true);
 			} else {
-				sendMessage(sender, alreadyLoading().replaceAll("%area%", area), true);
+				sendMessage(sender, alreadyLoading().replace("%area%", area), true);
 			}
 		} else {
-			sendMessage(sender, invalidArea().replaceAll("%area%", area), true);
+			sendMessage(sender, invalidArea().replace("%area%", area), true);
 		}
 	}
 
 	private String prepare() {
-		return Manager.getConfig().getString("Commands.Load.Prepare");
+		return Manager.getConfig().getString("Commands.Load.Preparing");
 	}
 
 	public static String invalidArea() {
