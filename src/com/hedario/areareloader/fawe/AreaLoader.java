@@ -32,6 +32,9 @@ public class AreaLoader {
 	private float curr_perc;
 
 	public AreaLoader(String area, int x, int z, int size, Location location, CommandSender sender) {
+		if (sender != null) {
+			this.sender = sender;
+		}
 		if (AreaReloader.getQueue().isQueued(area) || areas.contains(this)) {
 			if (AreaReloader.debug) {
 				Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Loading -=-=-=-=-=-=-=-=-=-=-");
@@ -43,13 +46,11 @@ public class AreaLoader {
 			return;
 		}
 		if (AreaMethods.isAsyncCreation && AreaMethods.creations.contains(area)) {
-			AreaMethods.sendMessage(sender, stillCreating().replace("%area%", area), true);
+			AreaMethods.sendMessage(getSender(), stillCreating().replace("%area%", area), true);
 			return;
 		}
-		if (sender != null) {
-			this.sender = sender;
-			AreaMethods.sendMessage(sender, prepare().replace("%area%", area), true);
-			Bukkit.getServer().getPluginManager().callEvent(new AreaLoadEvent(((Player) sender), area));
+		if (getSender() != null) {
+			Bukkit.getServer().getPluginManager().callEvent(new AreaLoadEvent(getSender(), area));
 		} else {
 			Bukkit.getServer().getPluginManager().callEvent(new AreaLoadEvent(area));
 		}
@@ -117,7 +118,9 @@ public class AreaLoader {
 				if ((al.sender != null)) {
 					final long time = System.currentTimeMillis() - fakeTime;
 					AreaMethods.sendMessage(al.sender, success().replace("%area%", al.getArea()).replace("%time%", AreaMethods.formatTime(time)), true);
-					Bukkit.getServer().getPluginManager().callEvent(new AreaCompleteEvent(((Player) al.getSender()), al.getArea()));
+					Bukkit.getServer().getPluginManager().callEvent(new AreaCompleteEvent(al.getSender(), al.getArea()));
+				} else {
+					Bukkit.getServer().getPluginManager().callEvent(new AreaCompleteEvent(al.getArea()));
 				}
 				completed.add(al);
 				// remove the area from the queue and cancel its running task.
@@ -182,10 +185,6 @@ public class AreaLoader {
 	public static String process() {
 		return Manager.getConfig().getString("Commands.Load.Process");
 	}
-	
-	public static String prepare() {
-		return Manager.getConfig().getString("Commands.Load.Preparing");
-	}
 
 	private static String success() {
 		return Manager.getConfig().getString("Commands.Load.Success");
@@ -195,7 +194,7 @@ public class AreaLoader {
 		return Manager.getConfig().getString("Commands.Load.Fail");
 	}
 	
-	private static String stillCreating() {
+	public static String stillCreating() {
 		return Manager.getConfig().getString("Commands.Load.StillCreating");
 	}
 
