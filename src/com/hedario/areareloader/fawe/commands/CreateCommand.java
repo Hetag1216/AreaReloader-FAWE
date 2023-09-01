@@ -69,8 +69,12 @@ public class CreateCommand extends ARCommand {
 			};
 			
 			if (isAsync()) {
-				br.runTaskAsynchronously(AreaReloader.getInstance());
-				AreaMethods.creations.add(area);
+				if (!skipE) {
+					br.runTaskAsynchronously(AreaReloader.getInstance());
+					AreaMethods.creations.add(area);
+				} else {
+					br.runTask(AreaReloader.getInstance());
+				}
 			} else {
 				br.runTask(AreaReloader.getInstance());
 			}
