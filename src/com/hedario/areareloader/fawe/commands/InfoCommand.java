@@ -37,7 +37,8 @@ public class InfoCommand extends ARCommand {
 		sendMessage(sender, "&6World &7» &e" + AreaMethods.getAreaInWorld(area), false);
 		sendMessage(sender, "&6First corner &7» &e" + AreaMethods.getAreaX(area) + "&7, &e" + AreaMethods.getAreaY(area) + "&7, &e" + AreaMethods.getAreaZ(area), false);
 		sendMessage(sender, "&6Second corner &7» &e" + AreaMethods.getAreaMaxX(area) + "&7, &e" + AreaMethods.getAreaMaxY(area) + "&7, &e" + AreaMethods.getAreaMaxZ(area), false);
-		sendMessage(sender, "&6Interval &7» &6" + (AreaMethods.isGlobalInterval(area) ? AreaMethods.formatTime(AreaMethods.getInterval(area)) + " &7(&eGLOBAL&7)" : AreaMethods.formatTime(AreaMethods.getInterval(area))), false);
+		sendMessage(sender, "&6Chunk size &7» &e" + AreaMethods.getAreaChunk(area), false);
+		sendMessage(sender, "&6Loading Interval &7» &6" + (AreaMethods.isGlobalInterval(area) ? AreaMethods.formatTime(AreaMethods.getInterval(area)) + " &7(&eGLOBAL&7)" : AreaMethods.formatTime(AreaMethods.getInterval(area))), false);
 		
 		if (Manager.getAreasConfig().getBoolean("Areas." + area + ".SafeLocation.Enabled")) {
 			World world = Bukkit.getWorld(Manager.getAreasConfig().getString("Areas." + area + ".SafeLocation.World"));
