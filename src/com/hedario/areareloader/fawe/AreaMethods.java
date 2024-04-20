@@ -124,11 +124,11 @@ public class AreaMethods {
 		return true;
 	}
 
-	public static Integer getMaxInt(int min, int max, int size) {
-		if (max - min < size) {
+	public static Integer getMaxInt(int min, int max, int length) {
+		if (max - min < length) {
 			return Integer.valueOf(max - min);
 		}
-		return Integer.valueOf(size);
+		return Integer.valueOf(length);
 	}
 
 	public static boolean loadSchematicArea(CommandSender p, String area, String schemFile, World world, Location location) throws WorldEditException, FileNotFoundException, IOException {
@@ -158,12 +158,12 @@ public class AreaMethods {
 	 * 
 	 * @param player       The player creating the area
 	 * @param area         The name
-	 * @param size         The size of the area <b>
+	 * @param length         The length of the area <b>
 	 *                     <p>
 	 *                     The default value is supposed to comprehend the whole
 	 *                     chunk, so the default one should be 16 as specified in
 	 *                     {@link#CreateCommand}. The actual saved values will be
-	 *                     the result of the area's XZ size, which will represent
+	 *                     the result of the area's XZ length, which will represent
 	 *                     how wide the area is in chunks.</b>
 	 *                     </p>
 	 * @param copyEntities Whether or not entities should be saved
@@ -174,7 +174,7 @@ public class AreaMethods {
 	 *         </p>
 	 * @throws WorldEditException
 	 */
-	public static boolean createNewArea(final Player player, final String area, final int size, final boolean copyEntities, final boolean copyBiomes) throws WorldEditException {
+	public static boolean createNewArea(final Player player, final String area, final int length, final boolean copyEntities, final boolean copyBiomes) throws WorldEditException {
 		File dir = new File(AreaReloader.plugin.getDataFolder() + File.separator + "Areas" + File.separator + area);
 		if (dir.exists()) {
 			File[] files = dir.listFiles();
@@ -216,9 +216,9 @@ public class AreaMethods {
 		Manager.getAreasConfig().set("Areas." + area + ".Maximum.Y", max.getBlockY());
 		Manager.getAreasConfig().set("Areas." + area + ".Maximum.X", max.getBlockX());
 		Manager.areas.saveConfig();
-		for (int x = min.getBlockX(); x <= max.getBlockX(); x += size) {
+		for (int x = min.getBlockX(); x <= max.getBlockX(); x += length) {
 			int curZ = 0;
-			for (int z = min.getBlockZ(); z <= max.getBlockZ(); z += size) {
+			for (int z = min.getBlockZ(); z <= max.getBlockZ(); z += length) {
 				EditSession extent = WorldEdit.getInstance().newEditSessionBuilder()
 						.world(sel.getWorld())
 						.fastMode(fastMode)
@@ -229,7 +229,7 @@ public class AreaMethods {
 						.limitUnlimited()
 						.build();
 				Location pt1 = new Location(player.getWorld(), x, min.getBlockY(), z);
-				Location pt2 = new Location(player.getWorld(), x + getMaxInt(x, max.getBlockX(), size), max.getBlockY(), z + getMaxInt(z, max.getBlockZ(), size));
+				Location pt2 = new Location(player.getWorld(), x + getMaxInt(x, max.getBlockX(), length), max.getBlockY(), z + getMaxInt(z, max.getBlockZ(), length));
 
 				BlockVector3 bvmin = BukkitAdapter.asBlockVector(pt1);
 				BlockVector3 bvmax = BukkitAdapter.asBlockVector(pt2);
@@ -292,6 +292,7 @@ public class AreaMethods {
 		Manager.getAreasConfig().set("Areas." + area + ".Size.X", maxX);
 		Manager.getAreasConfig().set("Areas." + area + ".Size.Z", maxZ);
 		Manager.getAreasConfig().set("Areas." + area + ".Size.Chunk", (maxX * maxZ > 0 ? maxX * maxZ : 1));
+		Manager.getAreasConfig().set("Areas." + area + ".Size.Length", length);
 		Manager.getAreasConfig().set("Areas." + area + ".Loading.Interval.Global", true);
 		Manager.getAreasConfig().set("Areas." + area + ".Loading.Interval.Time", 200);
 		Manager.getAreasConfig().set("Areas." + area + ".AutoReload.Enabled", false);
@@ -395,6 +396,10 @@ public class AreaMethods {
 
 	public static Integer getAreaChunk(String area) {
 		return Manager.getAreasConfig().getInt("Areas." + area + ".Size.Chunk");
+	}
+	
+	public static Integer getAreaLength(String area) {
+		return Manager.getAreasConfig().getInt("Areas." + area + ".Size.Length");
 	}
 
 	public static void reloadConfig() {
