@@ -20,7 +20,7 @@ public class AreaLoader {
 	public static List<AreaLoader> areas = new ArrayList<AreaLoader>();
 	private String area;
 	private int x, maxX, z, maxZ;
-	private int size;
+	private int length;
 	private int chunks, maxChunks;
 	private Location location;
 	private boolean completed = false;
@@ -31,7 +31,7 @@ public class AreaLoader {
 	private boolean sent = false;
 	private float curr_perc;
 
-	public AreaLoader(String area, int x, int z, int size, Location location, CommandSender sender) {
+	public AreaLoader(String area, int x, int z, int length, Location location, CommandSender sender) {
 		if (sender != null) {
 			this.sender = sender;
 		}
@@ -58,7 +58,7 @@ public class AreaLoader {
 		this.area = area;
 		this.maxX = x;
 		this.maxZ = z;
-		this.size = 16;
+		this.length = (AreaMethods.getAreaLength(area) != null && AreaMethods.getAreaLength(area) > 0) ? AreaMethods.getAreaLength(area) : 16;
 		chunks = 0;
 		x++;
 		z++;
@@ -75,7 +75,7 @@ public class AreaLoader {
 	}
 
 	private void progress() throws FileNotFoundException, WorldEditException, IOException {
-		if (!AreaMethods.loadSchematicArea(sender, getArea(), AreaMethods.getFileName(getArea(), x, z), location.getWorld(), location.clone().add(x * size, 0.0D, z * size))) {
+		if (!AreaMethods.loadSchematicArea(sender, getArea(), AreaMethods.getFileName(getArea(), x, z), location.getWorld(), location.clone().add(x * length, 0.0D, z * length))) {
 			AreaReloader.log.warning("Failed to reset section '" + AreaMethods.getFileName(getArea(), x, z) + "'!");
 			Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Loading -=-=-=-=-=-=-=-=-=-=-");
 			Manager.printDebug("Failed to reset section '" + AreaMethods.getFileName(getArea(), x, z) + "'!");
