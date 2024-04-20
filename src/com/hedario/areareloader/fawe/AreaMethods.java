@@ -19,6 +19,7 @@ import com.hedario.areareloader.fawe.commands.ARCommand;
 import com.hedario.areareloader.fawe.commands.DisplayCommand;
 import com.hedario.areareloader.fawe.configuration.Manager;
 import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.WorldEditException;
@@ -190,8 +191,10 @@ public class AreaMethods {
 
 		BukkitPlayer lp = BukkitAdapter.adapt(player);
 		LocalSession ls = WorldEdit.getInstance().getSessionManager().get(lp);
-		Region sel = ls.getSelection(BukkitAdapter.adapt(player.getWorld()));
-		if (sel == null) {
+		Region sel = null;
+		try {
+			sel = ls.getSelection(BukkitAdapter.adapt(player.getWorld()));
+		} catch (IncompleteRegionException ex) {
 			sendMessage(player, "&cYou must first select a region!", true);
 			return false;
 		}
@@ -216,7 +219,15 @@ public class AreaMethods {
 		for (int x = min.getBlockX(); x <= max.getBlockX(); x += size) {
 			int curZ = 0;
 			for (int z = min.getBlockZ(); z <= max.getBlockZ(); z += size) {
-				EditSession extent = WorldEdit.getInstance().newEditSessionBuilder().world(sel.getWorld()).fastMode(fastMode).combineStages(true).changeSetNull().checkMemory(false).allowedRegionsEverywhere().limitUnlimited().build();
+				EditSession extent = WorldEdit.getInstance().newEditSessionBuilder()
+						.world(sel.getWorld())
+						.fastMode(fastMode)
+						.combineStages(true)
+						.changeSetNull()
+						.checkMemory(false)
+						.allowedRegionsEverywhere()
+						.limitUnlimited()
+						.build();
 				Location pt1 = new Location(player.getWorld(), x, min.getBlockY(), z);
 				Location pt2 = new Location(player.getWorld(), x + getMaxInt(x, max.getBlockX(), size), max.getBlockY(), z + getMaxInt(z, max.getBlockZ(), size));
 
