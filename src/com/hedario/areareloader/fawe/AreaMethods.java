@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -192,6 +191,10 @@ public class AreaMethods {
 		BukkitPlayer lp = BukkitAdapter.adapt(player);
 		LocalSession ls = WorldEdit.getInstance().getSessionManager().get(lp);
 		Region sel = ls.getSelection(BukkitAdapter.adapt(player.getWorld()));
+		if (sel == null) {
+			sendMessage(player, "&cYou must first select a region!", true);
+			return false;
+		}
 		int maxX = 0;
 		int maxZ = 0;
 		if (!(sel instanceof CuboidRegion)) {
@@ -396,6 +399,6 @@ public class AreaMethods {
 	}
 	
 	public static String getPrefix() {
-		return ChatColor.translateAlternateColorCodes('&', Manager.getConfig().getString("Settings.Language.ChatPrefix"));
+		return Manager.getConfig().getString("Settings.Language.ChatPrefix");
 	}
 }
