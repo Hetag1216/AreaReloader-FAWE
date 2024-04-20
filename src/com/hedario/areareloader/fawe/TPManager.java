@@ -56,6 +56,8 @@ public class TPManager {
 								final Location loc = new Location(world, x, y, z);
 								for (Entity entity : world.getNearbyEntities(loc, 1, 1, 1, target -> target instanceof Player)) {
 									Location safeLocation = getSafeLocation(areaName);
+									safeLocation.setYaw(getYaw(area));
+									safeLocation.setPitch(getPitch(area));
 									entity.teleport(safeLocation);
 								}
 							}
@@ -124,6 +126,14 @@ public class TPManager {
 		double sy = Manager.areas.getConfig().getDouble("Areas." + area + ".SafeLocation.Y");
 		double sz = Manager.areas.getConfig().getDouble("Areas." + area + ".SafeLocation.Z");
 		return new Location(world, sx, sy, sz);
+	}
+	
+	public static float getYaw(final String area) {
+		return (float) Manager.areas.getConfig().getDouble("Areas." + area + ".SafeLocation.Yaw");
+	}
+	
+	public static float getPitch(final String area) {
+		return (float) Manager.areas.getConfig().getDouble("Areas." + area + ".SafeLocation.Pitch");
 	}
 
 	/**

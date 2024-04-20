@@ -32,9 +32,11 @@ public class LocationCommand extends ARCommand {
 			final Location location = ((Player) sender).getLocation();
 			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Enabled", true);
 			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.World", location.getWorld().getName());
-			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.X", (int) location.getX());
-			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Y", (int) location.getY());
-			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Z", (int) location.getZ());
+			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.X", location.getX());
+			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Y", location.getY());
+			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Z", location.getZ());
+			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Yaw", location.getYaw());
+			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Pitch", location.getPitch());
 			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Settings.Speed", (AreaMethods.getAreaChunk(area) > 7 ? 7 : AreaMethods.getAreaChunk(area)));
 			Manager.areas.getConfig().set("Areas." + area + ".SafeLocation.Settings.Interval", 500);
 			Manager.areas.saveConfig();
