@@ -15,14 +15,14 @@ import com.sk89q.worldedit.WorldEditException;
 
 public class CreateCommand extends ARCommand {
 	private boolean skipE, skipB;
-
+	private int length = 16;
 	public CreateCommand() {
-		super("create", "/ar create <name> <copyEntities: true|false> <copyBiomes: true|false>", Manager.getConfig().getString("Commands.Create.Description"), new String[] { "create" });
+		super("create", "/ar create <name> <copyEntities: true|false> <copyBiomes: true|false> [length]", Manager.getConfig().getString("Commands.Create.Description"), new String[] { "create" });
 	}
 
 	@Override
 	public void execute(CommandSender sender, List<String> args) {
-		if (!hasPermission(sender) || !isPlayer(sender) || !this.correctLength(sender, args.size(), 3, 3)) {
+		if (!hasPermission(sender) || !isPlayer(sender) || !this.correctLength(sender, args.size(), 3, 4)) {
 			return;
 		}
 		String area = args.get(0);
@@ -52,13 +52,18 @@ public class CreateCommand extends ARCommand {
 			sendMessage(sender, invalidValue(), true);
 			return;
 		}
+		if (this.isNumeric(args.get(3))) {
+			length = Integer.valueOf(args.get(3));
+		} else {
+			sendMessage(sender, invalidLength(), true);
+		}
 		try {
 			BukkitRunnable br = new BukkitRunnable() {
 				@Override
 				public void run() {
 					sendMessage(sender, preparing().replaceAll("%area%", area), true);
 					Player player = (Player) sender;
-					if (AreaMethods.createNewArea((Player) sender, args.get(0), 16, skipE, skipB)) {
+					if (AreaMethods.createNewArea((Player) sender, args.get(0), length, skipE, skipB)) {
 						sendMessage(sender, success().replaceAll("%area%", area), true);
 						player.getWorld().playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.3F);
 						if (AreaMethods.isAsyncCreation && AreaMethods.creations.contains(area)) {
@@ -114,11 +119,15 @@ public class CreateCommand extends ARCommand {
 	private String invalidValue() {
 		return Manager.getConfig().getString("Commands.Create.InvalidValue");
 	}
+	
+	private String invalidLength() {
+		return Manager.getConfig().getString("Commands.Create.InvalidLength");
+	}
 
 	@Override
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
 		List<String> list = new ArrayList<String>();
-		if (!sender.hasPermission("areareloader.command.create") || args.size() >= 3) {
+		if (!sender.hasPermission("areareloader.command.create") || args.size() >= 4) {
 			return new ArrayList<String>();
 		}
 		if (args.size() == 0) {
@@ -133,6 +142,10 @@ public class CreateCommand extends ARCommand {
 			list.add("copyBiomes:false");
 			list.add("true");
 			list.add("false");
+		} else if (args.size() == 3) {
+			list.add("length");
+		} else {
+			return new ArrayList<String>();
 		}
 		return list;
 	}
