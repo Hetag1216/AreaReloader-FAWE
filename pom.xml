@@ -3,7 +3,7 @@
 
 	<groupId>com.hedario.areareloader.fawe</groupId>
 	<artifactId>AreaReloader-FAWE</artifactId>
-	<version>1.4</version>
+	<version>1.5</version>
 	<packaging>jar</packaging>
 	<name>AreaReloader-FAWE</name>
 
