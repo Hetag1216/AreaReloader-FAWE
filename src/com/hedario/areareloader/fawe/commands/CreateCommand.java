@@ -35,9 +35,9 @@ public class CreateCommand extends ARCommand {
 			return;
 		}
 		final String skipEnts = args.get(1);
-		if (skipEnts.equalsIgnoreCase("true")) {
+		if (skipEnts.contains("true")) {
 			skipE = true;
-		} else if (skipEnts.equalsIgnoreCase("false")) {
+		} else if (skipEnts.contains("false")) {
 			skipE = false;
 		} else {
 			sendMessage(sender, invalidValue(), true);
@@ -46,8 +46,11 @@ public class CreateCommand extends ARCommand {
 		final String biomes = args.get(2);
 		if (biomes.equalsIgnoreCase("true")) {
 			skipB = true;
-		} else {
+		} else if (biomes.contains("false")) {
 			skipB = false;
+		} else {
+			sendMessage(sender, invalidValue(), true);
+			return;
 		}
 		try {
 			BukkitRunnable br = new BukkitRunnable() {
@@ -118,11 +121,16 @@ public class CreateCommand extends ARCommand {
 		if (!sender.hasPermission("areareloader.command.create") || args.size() >= 3) {
 			return new ArrayList<String>();
 		}
-		if (args.size() == 1) {
+		if (args.size() == 0) {
+			list.add("Choose the name of the area");
+		} else if (args.size() == 1) {
+			list.add("copyEntities:true");
+			list.add("copyEntities:false");
 			list.add("true");
 			list.add("false");
-		}
-		if (args.size() == 2) {
+		} else if (args.size() == 2) {
+			list.add("copyBiomes:true");
+			list.add("copyBiomes:false");
 			list.add("true");
 			list.add("false");
 		}
