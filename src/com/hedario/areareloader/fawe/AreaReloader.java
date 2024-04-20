@@ -90,9 +90,10 @@ public class AreaReloader extends JavaPlugin implements Listener {
 			Runnable announcer = new Runnable() {
 				@Override
 				public void run() {
+					log.info("AreaReloader is brought to you freely, if you wish to support the project, please consider making a donation!");
 					for (Player players : getServer().getOnlinePlayers()) {
 						if (players.hasPermission("areareloader.*") || players.isOp()) {
-							players.sendMessage(AreaMethods.getPrefix() + "AreaReloader is brought to you freely, if you wish to support the project, please consider making a donation!");
+							AreaMethods.sendMessage(players, "AreaReloader is brought to you freely, if you wish to support the project, please consider making a donation!", true);
 						}
 					}
 				}
