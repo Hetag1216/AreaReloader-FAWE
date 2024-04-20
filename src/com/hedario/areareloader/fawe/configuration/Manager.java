@@ -17,7 +17,7 @@ import com.hedario.areareloader.fawe.commands.Executor;
 public class Manager {
 	public static Config defaultConfig;
 	public static Config areas;
-	private static double version = 1.1;
+	private static double version = 1.2;
 
 	public Manager() {
 		initConfigs();
@@ -44,7 +44,7 @@ public class Manager {
 			config = defaultConfig.getConfig();
 
 		config.addDefault("Settings.Language.ChatPrefix", "&8[&6AreaReloader-FAWE&8]&6 ");
-		config.addDefault("Settings.Language.NoPermission", "You dont own sufficent permissions to run this command!");
+		config.addDefault("Settings.Language.NoPermission", "You don't own sufficent permissions to run this command!");
 		config.addDefault("Settings.Language.MustBePlayer", "You must be a player to use this command!");
 		
 		config.addDefault("Settings.Debug.Enabled", false);
@@ -64,11 +64,20 @@ public class Manager {
 		Executor.help = helpLines;
 		helpLines.add("&8/&6ar &ehelp &7Display commands help.");
 		config.addDefault("Commands.HelpLines", helpLines);
-		config.addDefault("Commands.Help.Description", "Shows information about a command.");
+		config.addDefault("Commands.Help.Description", "&7Shows information about a command.");
 		config.addDefault("Commands.Help.InvalidTopic", "&7Please specify a valid topic.");
 		config.addDefault("Commands.Help.ProperUsage", "&6Proper usage: &e&o");
 
-		config.addDefault("Commands.Create.Description", "&7Creates a new area.");
+		config.addDefault("Commands.Create.Description",
+				"&7Creates a new area.\n"
+				+ "&e<name> &6stands for the name of the area.\n"
+				+ "&e<copyEntities> &6will flag whether or not entities shall be saved at the moment of creation, if so they will respawned when the area is loaded.\n"
+				+ "&e<copyBiomes> &6allows you to save the area's biomes, which will be restored upon area loading.\n"
+				+ "&e[length] &6allows you to customise the size of each section of the area, you can adjust this setting to your own needs or leave this field empty, if so the default 16 blocks length will be used.\n"
+				+ "&eHigher values &6will create fewer larger schematics and sections will be loaded in bigger chunks, this can be useful to process large areas in less time causing more blocks to be placed at the same time.\n"
+				+ "&eSmaller length values &6will create more and lighter schematics, causing the area to split in multiple smaller sections.\n"
+				+ "This can be useful to better distribute the server's load after block placing but may result slower in the overall area's loading time.\n"
+				+ "Due to higher numbers of schematics being generated, the area creation process may take more time and cause a delay so be careful not to use too small of a value for large sized areas.");
 		config.addDefault("Commands.Create.Asynchronously", false);
 		config.addDefault("Commands.Create.Preparing", "Preparing to create &e%area%&6...");
 		config.addDefault("Commands.Create.Success", "&e%area%&6 has been succesfully created. Use the command &e/ar location &6to set a safe location for players inside the area whenever it loads!");
@@ -76,6 +85,7 @@ public class Manager {
 		config.addDefault("Commands.Create.AlreadyExists", "An area with the name of &e%area%&6 already exists, please choose a different name!");
 		config.addDefault("Commands.Create.InvalidValue", "You must select a value: &etrue&7/&efalse");
 		config.addDefault("Commands.Create.InvalidName", "&e%area% &6is not a valid name!");
+		config.addDefault("Commands.Create.InvalidLength", "&eThe value must be a positive number!");
 		
 		config.addDefault("Commands.Display.Description", "&7Displays corners around existing areas.");
 		config.addDefault("Commands.Display.Display", "Displaying &e%area%&6.");

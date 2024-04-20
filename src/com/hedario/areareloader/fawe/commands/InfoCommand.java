@@ -38,7 +38,7 @@ public class InfoCommand extends ARCommand {
 		sendMessage(sender, "&6First corner &7» &e" + AreaMethods.getAreaX(area) + "&7, &e" + AreaMethods.getAreaY(area) + "&7, &e" + AreaMethods.getAreaZ(area), false);
 		sendMessage(sender, "&6Second corner &7» &e" + AreaMethods.getAreaMaxX(area) + "&7, &e" + AreaMethods.getAreaMaxY(area) + "&7, &e" + AreaMethods.getAreaMaxZ(area), false);
 		sendMessage(sender, "&6Chunk size &7» &e" + AreaMethods.getAreaChunk(area), false);
-		sendMessage(sender, "&6Block length &7» &e" + AreaMethods.getAreaLength(area), false);
+		sendMessage(sender, "&6Block length &7» &e" + ((AreaMethods.getAreaLength(area) != null && AreaMethods.getAreaLength(area) > 0) ? AreaMethods.getAreaLength(area) : 16), false);
 		sendMessage(sender, "&6Loading Interval &7» &6" + (AreaMethods.isGlobalInterval(area) ? AreaMethods.formatTime(AreaMethods.getInterval(area)) + " &7(&eGLOBAL&7)" : AreaMethods.formatTime(AreaMethods.getInterval(area))), false);
 		
 		if (Manager.getAreasConfig().getBoolean("Areas." + area + ".SafeLocation.Enabled")) {

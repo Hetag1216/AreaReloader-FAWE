@@ -44,7 +44,7 @@ public class CreateCommand extends ARCommand {
 			return;
 		}
 		final String biomes = args.get(2);
-		if (biomes.equalsIgnoreCase("true")) {
+		if (biomes.contains("true")) {
 			skipB = true;
 		} else if (biomes.contains("false")) {
 			skipB = false;
@@ -54,8 +54,13 @@ public class CreateCommand extends ARCommand {
 		}
 		if (this.isNumeric(args.get(3))) {
 			length = Integer.valueOf(args.get(3));
+			if (length < 0) {
+				sendMessage(sender, invalidLength(), true);
+				return;
+			}
 		} else {
 			sendMessage(sender, invalidLength(), true);
+			return;
 		}
 		try {
 			BukkitRunnable br = new BukkitRunnable() {
@@ -144,6 +149,8 @@ public class CreateCommand extends ARCommand {
 			list.add("false");
 		} else if (args.size() == 3) {
 			list.add("length");
+			list.add("16");
+			list.add("32");
 		} else {
 			return new ArrayList<String>();
 		}
