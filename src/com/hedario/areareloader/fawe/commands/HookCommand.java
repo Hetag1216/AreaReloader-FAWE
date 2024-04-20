@@ -17,7 +17,7 @@ public class HookCommand extends ARCommand {
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 1)) {
 			return;
 		}
-		sendMessage(sender, "&6-=-=-=-= &7« &6 Hooks &7» &6=-=-=-=-", false);
+		sendMessage(sender, "&6-=-=-=-= " + this.getPrefix() + "&6=-=-=-=-", false);
 		sendMessage(sender, "&7- &eFastAsyncWorldEdit &7(&eFAWE&7)", false);
 		sendMessage(sender, AreaReloader.plugin.getStatus(), false);
 		if (AreaReloader.getWEInstance() != null) {
