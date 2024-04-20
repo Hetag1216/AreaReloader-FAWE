@@ -24,3 +24,4 @@ permissions:
       areareloader.command.info: true
       areareloader.command.display: true
       areareloader.command.cancel: true
+      areareloader.command.location: true
