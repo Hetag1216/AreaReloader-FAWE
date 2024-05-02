@@ -35,22 +35,11 @@ public class AreaLoader {
 		if (sender != null) {
 			this.sender = sender;
 		}
-		if (Queue.isQueued(area) && (Queue.getTaskByName(area) == -1)) {
-			
-			return;
-		}
 		if (Queue.isQueued(area) || areas.contains(this)) {
 			if (AreaReloader.debug) {
 				Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Loading -=-=-=-=-=-=-=-=-=-=-");
 				Manager.printDebug(area + " is already in the queue, it may be currently loading.");
 				Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
-			}
-			if (getSender() != null) {
-				if (Queue.getTaskByName(area) == -1) {
-					AreaMethods.sendMessage(getSender(), stillCreating().replace("%area%", area), true);
-				} else {
-					AreaMethods.sendMessage(getSender(), alreadyLoading().replace("%area%", area), true);
-				}
 			}
 			return;
 		}
@@ -183,10 +172,6 @@ public class AreaLoader {
 		}.runTaskTimer(AreaReloader.getInstance(), 0, 0);
 	}
 	
-	public static String alreadyLoading() {
-		return Manager.getConfig().getString("Commands.Load.AlreadyLoading");
-	}
-	
 	public static String process() {
 		return Manager.getConfig().getString("Commands.Load.Process");
 	}
@@ -197,10 +182,6 @@ public class AreaLoader {
 	
 	private static String fail() {
 		return Manager.getConfig().getString("Commands.Load.Fail");
-	}
-	
-	public static String stillCreating() {
-		return Manager.getConfig().getString("Commands.Load.StillCreating");
 	}
 
 	public static void reset(String area) {

@@ -35,6 +35,7 @@ public class CreateCommand extends ARCommand {
 			sendMessage(sender, exists().replaceAll("%area%", area), true);
 			return;
 		}
+		
 		final String skipEnts = args.get(1);
 		if (skipEnts.contains("true")) {
 			skipE = true;
@@ -44,6 +45,7 @@ public class CreateCommand extends ARCommand {
 			sendMessage(sender, invalidValue(), true);
 			return;
 		}
+		
 		final String biomes = args.get(2);
 		if (biomes.contains("true")) {
 			skipB = true;
@@ -53,28 +55,26 @@ public class CreateCommand extends ARCommand {
 			sendMessage(sender, invalidValue(), true);
 			return;
 		}
-		if (args.size() == 4) {
-			if (this.isNumeric(args.get(3))) {
-				length = Integer.valueOf(args.get(3));
-				if (length < 0) {
-					sendMessage(sender, invalidLength(), true);
-					return;
-				}
-			} else {
+
+		if (this.isNumeric(args.get(3))) {
+			length = Integer.valueOf(args.get(3));
+			if (length < 0) {
 				sendMessage(sender, invalidLength(), true);
 				return;
 			}
+		} else {
+			sendMessage(sender, invalidLength(), true);
+			return;
 		}
-		if (args.size() == 5) {
-			final String async = args.get(4);
-			if (async.contains("true")) {
-				isAsync = true;
-			} else if (async.contains("false")) {
-				isAsync = false;
-			} else {
-				sendMessage(sender, invalidValue(), true);
-				return;
-			}
+		
+		final String async = args.get(4);
+		if (async.contains("true")) {
+			isAsync = true;
+		} else if (async.contains("false")) {
+			isAsync = false;
+		} else {
+			sendMessage(sender, invalidValue(), true);
+			return;
 		}
 		
 		if (skipE) {
@@ -104,7 +104,6 @@ public class CreateCommand extends ARCommand {
 				br.runTask(AreaReloader.getInstance());
 			}
 			Queue.get().put(area, -1);
-			this.sendMessage(sender, "queued", true);
 
 		} catch (WorldEditException e) {
 			Manager.printDebug(this.getName(), e, sender);

@@ -23,7 +23,7 @@ public class LocationCommand extends ARCommand {
 		}
 		
 		final String area = args.get(0);
-		if (!AreaMethods.areaExist(area)) {
+		if (!AreaMethods.exists(area)) {
 			this.sendMessage(sender, invalidArea(), true);
 			return;
 		}

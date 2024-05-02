@@ -22,17 +22,21 @@ public class LoadCommand extends ARCommand {
 			return;
 		}
 		String area = args.get(0);
-		if (Manager.areas.getConfig().contains("Areas." + args.get(0))) {
-			if (!Queue.isQueued(area)) {
-			Location location = new Location(AreaMethods.getWorld(area), AreaMethods.getAreaX(area), AreaMethods.getAreaY(area), AreaMethods.getAreaZ(area));
-			new AreaLoader(area, AreaMethods.getAreaSizeX(area), AreaMethods.getAreaSizeZ(area), AreaMethods.getAreaChunk(area), location, sender);
-			sendMessage(sender, prepare().replace("%area%", area), true);
+		if (!AreaMethods.exists(area)) {
+			sendMessage(sender, invalidArea().replace("%area%", area), true);
+			return;
+		}
+		if (Queue.isQueued(area)) {
+			if (Queue.getTaskByName(area) == -1) {
+				sendMessage(sender, stillCreating().replace("%area%", area), true);
 			} else {
 				sendMessage(sender, alreadyLoading().replace("%area%", area), true);
 			}
-		} else {
-			sendMessage(sender, invalidArea().replace("%area%", area), true);
+			return;
 		}
+		Location location = new Location(AreaMethods.getWorld(area), AreaMethods.getAreaX(area), AreaMethods.getAreaY(area), AreaMethods.getAreaZ(area));
+		new AreaLoader(area, AreaMethods.getAreaSizeX(area), AreaMethods.getAreaSizeZ(area), AreaMethods.getAreaChunk(area), location, sender);
+		sendMessage(sender, prepare().replace("%area%", area), true);
 	}
 
 	private String prepare() {
@@ -45,6 +49,10 @@ public class LoadCommand extends ARCommand {
 	
 	private String alreadyLoading() {
 		return Manager.getConfig().getString("Commands.Load.AlreadyLoading");
+	}
+	
+	static String stillCreating() {
+		return Manager.getConfig().getString("Commands.Load.StillCreating");
 	}
 	
 	@Override

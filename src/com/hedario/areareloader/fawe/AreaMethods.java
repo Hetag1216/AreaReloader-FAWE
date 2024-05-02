@@ -299,7 +299,6 @@ public class AreaMethods {
 		Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Killing -=-=-=-=-=-=-=-=-=-=-");
 		Manager.printDebug("Area: " + area);
 		if (Queue.isQueued(area)) {
-			AreaReloader.getInstance().getServer().getScheduler().cancelTask(Queue.getTaskByName(area));
 			AreaLoader.reset(area);
 			Queue.remove(area, Queue.getTaskByName(area));
 			Manager.printDebug("Killed area's execution.");
@@ -323,7 +322,7 @@ public class AreaMethods {
 		return areas;
 	}
 	
-	public static boolean areaExist(final String area) {
+	public static boolean exists(final String area) {
 		if (Manager.getAreasConfig().contains("Areas." + area)) {
 			return true;
 		}
