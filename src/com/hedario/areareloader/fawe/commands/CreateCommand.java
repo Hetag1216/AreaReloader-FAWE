@@ -10,19 +10,20 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.hedario.areareloader.fawe.AreaMethods;
 import com.hedario.areareloader.fawe.AreaReloader;
+import com.hedario.areareloader.fawe.Queue;
 import com.hedario.areareloader.fawe.configuration.Manager;
 import com.sk89q.worldedit.WorldEditException;
 
 public class CreateCommand extends ARCommand {
-	private boolean skipE, skipB;
+	private boolean skipE, skipB, isAsync = false;
 	private int length = 16;
 	public CreateCommand() {
-		super("create", "/ar create <name> <copyEntities: true|false> <copyBiomes: true|false> [length]", Manager.getConfig().getString("Commands.Create.Description"), new String[] { "create" });
+		super("create", "/ar create <name> <copyEntities: true|false> <copyBiomes: true|false> [length] [async]", Manager.getConfig().getString("Commands.Create.Description"), new String[] { "create" });
 	}
 
 	@Override
 	public void execute(CommandSender sender, List<String> args) {
-		if (!hasPermission(sender) || !isPlayer(sender) || !this.correctLength(sender, args.size(), 3, 4)) {
+		if (!hasPermission(sender) || !isPlayer(sender) || !this.correctLength(sender, args.size(), 3, 5)) {
 			return;
 		}
 		String area = args.get(0);
@@ -52,16 +53,34 @@ public class CreateCommand extends ARCommand {
 			sendMessage(sender, invalidValue(), true);
 			return;
 		}
-		if (this.isNumeric(args.get(3))) {
-			length = Integer.valueOf(args.get(3));
-			if (length < 0) {
+		if (args.size() == 4) {
+			if (this.isNumeric(args.get(3))) {
+				length = Integer.valueOf(args.get(3));
+				if (length < 0) {
+					sendMessage(sender, invalidLength(), true);
+					return;
+				}
+			} else {
 				sendMessage(sender, invalidLength(), true);
 				return;
 			}
-		} else {
-			sendMessage(sender, invalidLength(), true);
-			return;
 		}
+		if (args.size() == 5) {
+			final String async = args.get(4);
+			if (async.contains("true")) {
+				isAsync = true;
+			} else if (async.contains("false")) {
+				isAsync = false;
+			} else {
+				sendMessage(sender, invalidValue(), true);
+				return;
+			}
+		}
+		
+		if (skipE) {
+			isAsync = false;
+		}
+		
 		try {
 			BukkitRunnable br = new BukkitRunnable() {
 				@Override
@@ -71,34 +90,25 @@ public class CreateCommand extends ARCommand {
 					if (AreaMethods.createNewArea((Player) sender, args.get(0), length, skipE, skipB)) {
 						sendMessage(sender, success().replaceAll("%area%", area), true);
 						player.getWorld().playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.3F);
-						if (AreaMethods.isAsyncCreation && AreaMethods.creations.contains(area)) {
-							AreaMethods.creations.remove(area);
-						}
+						Queue.get().remove(area);
 					} else {
 						sendMessage(sender, fail().replaceAll("%area%", area), true);
 						player.getWorld().playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 0.5F);
 					}
 				}
 			};
-			
-			if (isAsync()) {
-				if (!skipE) {
-					br.runTaskAsynchronously(AreaReloader.getInstance());
-					AreaMethods.creations.add(area);
-				} else {
-					br.runTask(AreaReloader.getInstance());
-				}
+
+			if (isAsync) {
+				br.runTaskAsynchronously(AreaReloader.getInstance());
 			} else {
 				br.runTask(AreaReloader.getInstance());
 			}
+			Queue.get().put(area, -1);
+			this.sendMessage(sender, "queued", true);
 
 		} catch (WorldEditException e) {
 			Manager.printDebug(this.getName(), e, sender);
 		}
-	}
-	
-	private boolean isAsync() {
-		return Manager.getConfig().getBoolean("Commands.Create.Asynchronously");
 	}
 
 	private String preparing() {
@@ -132,7 +142,7 @@ public class CreateCommand extends ARCommand {
 	@Override
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
 		List<String> list = new ArrayList<String>();
-		if (!sender.hasPermission("areareloader.command.create") || args.size() >= 4) {
+		if (!sender.hasPermission("areareloader.command.create") || args.size() >= 5) {
 			return new ArrayList<String>();
 		}
 		if (args.size() == 0) {
@@ -151,6 +161,11 @@ public class CreateCommand extends ARCommand {
 			list.add("length");
 			list.add("16");
 			list.add("32");
+		} else if (args.size() == 4) {
+			list.add("async:true");
+			list.add("async:false");
+			list.add("true");
+			list.add("false");
 		} else {
 			return new ArrayList<String>();
 		}
