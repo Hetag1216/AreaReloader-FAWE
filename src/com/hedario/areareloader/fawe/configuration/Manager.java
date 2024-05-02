@@ -17,7 +17,8 @@ import com.hedario.areareloader.fawe.commands.Executor;
 public class Manager {
 	public static Config defaultConfig;
 	public static Config areas;
-	private static double version = 1.2;
+	private static double default_version = 1.2;
+	private static double areas_version = 1.2;
 
 	public Manager() {
 		initConfigs();
@@ -28,8 +29,11 @@ public class Manager {
 	}
 	
 	private static void checkVersion() {
-		if (getConfig().getDouble("Config.Version") < version || getAreasConfig().getDouble("Config.Version") < version) {
-			AreaReloader.getInstance().getLogger().warning("You're currently using an older configuration version, it's highly recommended to reset/update your configuration files!");
+		if (getConfig().getDouble("Config.Version") < default_version) {
+			AreaReloader.getInstance().getLogger().warning("You're using an older version for your config.yml configuration file, it's recommended to reset/update it!");
+		}
+		if (getConfig().getDouble("Config.Version") < areas_version) {
+			AreaReloader.getInstance().getLogger().warning("You're using an older version for your areas.yml configuration file, it's recommended to reset/update it!");
 		}
 	}
 	
@@ -133,12 +137,12 @@ public class Manager {
 		config.addDefault("Commands.Location.Teleport", "You've been teleported to the safe location for &e%area%&6!");
 		config.addDefault("Commands.Location.InvalidArea", "&e%area% &6does not exist.");
 		
-		config.addDefault("Config.Version", version);
+		config.addDefault("Config.Version", default_version);
 		defaultConfig.saveConfig();
 		} else if (configurationFile == areas) {
 			config = areas.getConfig();
 			
-			config.addDefault("Config.Version", version);
+			config.addDefault("Config.Version", areas_version);
 		}
 	}
 
@@ -230,5 +234,4 @@ public class Manager {
 		}
 		return;
 	}
-	
 }

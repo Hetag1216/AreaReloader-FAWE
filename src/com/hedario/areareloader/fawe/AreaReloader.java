@@ -35,7 +35,7 @@ public class AreaReloader extends JavaPlugin implements Listener {
 		plugin = this;
 		log = getLogger();
 
-		log.info("-=-=-=-= AreaReloader " + plugin.getDescription().getVersion() + " =-=-=-=-");
+		log.info("-=-=-=-= AreaReloader-FAWE " + plugin.getDescription().getVersion() + " =-=-=-=-");
 		
 		
 		try {
@@ -83,17 +83,17 @@ public class AreaReloader extends JavaPlugin implements Listener {
 		} else {
 			log.info("Metrics will be disabled.");
 		}
-		log.info("Succesfully enabled AreaReloader!");
+		log.info("Succesfully enabled AreaReloader-FAWE!");
 		log.info("-=-=-=-= -=- =-=-=-=-");
 		
 		if (announcer) {
 			Runnable announcer = new Runnable() {
 				@Override
 				public void run() {
-					log.info("AreaReloader is brought to you freely, if you wish to support the project, please consider making a donation!");
+					log.info("AreaReloader-FAWE is brought to you freely, if you wish to support the project, please consider making a donation!");
 					for (Player players : getServer().getOnlinePlayers()) {
 						if (players.hasPermission("areareloader.*") || players.isOp()) {
-							AreaMethods.sendMessage(players, "AreaReloader is brought to you freely, if you wish to support the project, please consider making a donation!", true);
+							AreaMethods.sendMessage(players, "AreaReloader-FAWE is brought to you freely, if you wish to support the project, please consider making a donation!", true);
 						}
 					}
 				}
@@ -104,7 +104,7 @@ public class AreaReloader extends JavaPlugin implements Listener {
 
 	public void onDisable() {
 		ShutDown();
-		log.info("Succesfully disabled AreaReloader!");
+		log.info("Succesfully disabled AreaReloader-FAWE!");
 	}
 	
 	/**
@@ -139,12 +139,12 @@ public class AreaReloader extends JavaPlugin implements Listener {
 	 */
 	private void checkForUpdates() {
 		new UpdateChecker(this, 106585).getVersion(version -> {
-			log.info("-=-=-=-= AreaReloader Updater =-=-=-=-");
+			log.info("-=-=-=-= AreaReloader-FAWE Updater =-=-=-=-");
 			if (this.getDescription().getVersion().equals(version)) {
 				log.info("You're running the latest version of the plugin!");
 			} else {
-				log.info("AreaReloader " + version + " is now available!");
-				log.info("You're running AreaReloader " + this.getDescription().getVersion());
+				log.info("AreaReloader-FAWE " + version + " is now available!");
+				log.info("You're running AreaReloader-FAWE " + this.getDescription().getVersion());
 				log.info("DOWNLOAD IT AT: https://www.spigotmc.org/resources/areareloader-fawe.106585/");
 			}
 			log.info("-=-=-=-= -=- =-=-=-=-");
