@@ -2,50 +2,19 @@ package com.hedario.areareloader.fawe;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
-
 public class Queue {
-	private HashMap<String, Integer> QUEUE;
-	private AreaReloader plugin;
+	private static HashMap<String, Integer> QUEUE;
+	private static AreaReloader plugin;
 
 	public Queue(AreaReloader plugin) {
-		this.plugin = plugin;
+		Queue.plugin = plugin;
 		QUEUE = new HashMap<>();
 	}
-
-	/**
-	 * Returns the queue instance.
-	 * 
-	 * @return QUEUE
-	 */
-	public HashMap<String, Integer> get() {
-		if (QUEUE != null)
-			return QUEUE;
-		return null;
+	
+	public static HashMap<String, Integer> get() {
+		return QUEUE;
 	}
-
-	/**
-	 * Adds an area to the queue with its given task ID.
-	 * 
-	 * @param area
-	 * @param ID
-	 * @return
-	 */
-	public void add(String area, int ID) {
-		get().put(area, ID);
-		return;
-	}
-
-	/**
-	 * Removes an area from the queue.
-	 * 
-	 * @param area
-	 */
-
-	public void remove(String area) {
-		get().remove(area);
-		return;
-	}
-
+	
 	/**
 	 * Removes an area from the queue and cancels its running task.
 	 * <p>
@@ -54,7 +23,7 @@ public class Queue {
 	 * @param area
 	 * @param taskID
 	 */
-	public void remove(String area, int taskID) {
+	public static void remove(String area, int taskID) {
 		try {
 			plugin.getServer().getScheduler().cancelTask(taskID);
 		} catch (Exception e) {
@@ -62,13 +31,6 @@ public class Queue {
 		}
 		get().remove(area);
 		return;
-	}
-	
-	public String getElements() {
-		for (String i : get().keySet()) {
-			return i;
-		}
-		return null;
 	}
 
 	/**
@@ -80,7 +42,7 @@ public class Queue {
 	 * 0 if == null
 	 */
 
-	public int getTaskByName(String area) {
+	public static int getTaskByName(String area) {
 		for (Entry<String, Integer> IDs : get().entrySet()) {
 			if (IDs.getKey().equals(area)) {
 				return IDs.getValue() != null ? IDs.getValue() : 0;
@@ -97,7 +59,7 @@ public class Queue {
 	 * @param area
 	 * @return true/false
 	 */
-	public boolean isQueued(String area) {
+	public static boolean isQueued(String area) {
 		if (get().containsKey(area))
 			return true;
 		return false;
@@ -113,7 +75,7 @@ public class Queue {
 	 * @param ID
 	 * @return true/false
 	 */
-	public boolean isQueued(String area, int ID) {
+	public static boolean isQueued(String area, int ID) {
 		for (Entry<String, Integer> IDs : get().entrySet()) {
 			if (IDs.getKey().equals(area) && IDs.getValue() == ID) {
 				return true;

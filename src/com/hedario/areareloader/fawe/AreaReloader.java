@@ -20,7 +20,6 @@ public class AreaReloader extends JavaPlugin implements Listener {
 	public static Logger log;
 	public static WorldEditPlugin fawe;
 	public static boolean debug, checker;
-	private static Queue queue;
 	private boolean updater, useMetrics, announcer;
 	
 	public void onEnable() {
@@ -47,19 +46,20 @@ public class AreaReloader extends JavaPlugin implements Listener {
 		}
 		
 		AreaMethods.performSetup();
-		// Instantiate queue
-		queue = new Queue(this);
 		
 		// Instantiate settings
 		debug = Manager.getConfig().getBoolean("Settings.Debug.Enabled");
 		updater = Manager.getConfig().getBoolean("Settings.Updater.Enabled");
 		announcer = Manager.getConfig().getBoolean("Settings.Announcer.Enabled");
 		
+		new Queue(plugin);
+		
 		// AreaLoader setup
 		AreaLoader.init();
 		
 		// AreaScheduler setup
 		AreaScheduler.init();
+		
 		
 		// Instantiate events
 		getServer().getPluginManager().registerEvents(new AreaListener(this), this);
@@ -114,14 +114,6 @@ public class AreaReloader extends JavaPlugin implements Listener {
 	public static AreaReloader getInstance() {
 		return plugin;
 	}
-
-	/**
-	 * Returns class utility instance.
-	 * @return queue.class
-	 */
-	public static Queue getQueue() {
-		return queue;
-	}
 	
 	public static WorldEditPlugin getWEInstance() {
 		return fawe;
@@ -170,8 +162,8 @@ public class AreaReloader extends JavaPlugin implements Listener {
 			getInstance().getServer().getScheduler().cancelTasks(getInstance());
 			getInstance().getServer().getScheduler().getActiveWorkers().clear();
 		}
-		if (!getQueue().get().isEmpty()) {
-			getQueue().get().clear();
+		if (!Queue.get().isEmpty()) {
+			Queue.get().clear();
 		}
 		if (!AreaLoader.areas.isEmpty()) {
 			AreaLoader.areas.clear();

@@ -37,8 +37,6 @@ import com.sk89q.worldedit.regions.Region;
 public class AreaMethods {
 	static AreaReloader plugin;
 	public static boolean fastMode = Manager.getConfig().getBoolean("Settings.AreaLoading.FastMode");
-	public static List<String> creations;
-	public static boolean isAsyncCreation = false;
 	
 	public static void performSetup() {
 		File areas = new File(AreaReloader.plugin.getDataFolder() + File.separator + "Areas");
@@ -48,10 +46,6 @@ public class AreaMethods {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-		if (Manager.getConfig().getBoolean("Commands.Create.Asynchronously")) {
-			creations = new ArrayList<String>();
-			isAsyncCreation = true;
 		}
 	}
 
@@ -304,10 +298,10 @@ public class AreaMethods {
 	public static void kill(String area) {
 		Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Killing -=-=-=-=-=-=-=-=-=-=-");
 		Manager.printDebug("Area: " + area);
-		if (AreaReloader.getQueue().isQueued(area)) {
-			AreaReloader.getInstance().getServer().getScheduler().cancelTask(AreaReloader.getQueue().getTaskByName(area));
+		if (Queue.isQueued(area)) {
+			AreaReloader.getInstance().getServer().getScheduler().cancelTask(Queue.getTaskByName(area));
 			AreaLoader.reset(area);
-			AreaReloader.getQueue().remove(area, AreaReloader.getQueue().getTaskByName(area));
+			Queue.remove(area, Queue.getTaskByName(area));
 			Manager.printDebug("Killed area's execution.");
 		}
 		if (DisplayCommand.isDisplaying(area)) {

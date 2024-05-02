@@ -10,6 +10,7 @@ import com.hedario.areareloader.fawe.AreaLoader;
 import com.hedario.areareloader.fawe.AreaMethods;
 import com.hedario.areareloader.fawe.AreaReloader;
 import com.hedario.areareloader.fawe.AreaScheduler;
+import com.hedario.areareloader.fawe.Queue;
 import com.hedario.areareloader.fawe.configuration.Manager;
 
 public class CancelCommand extends ARCommand {
@@ -26,7 +27,7 @@ public class CancelCommand extends ARCommand {
 		String input = args.get(0);
 		try {
 			if (input.equalsIgnoreCase("all")) {
-				if (AreaReloader.getQueue().get().isEmpty()) {
+				if (Queue.get().isEmpty()) {
 					this.sendMessage(sender, noAreas(), true);
 					return;
 				}
@@ -35,7 +36,7 @@ public class CancelCommand extends ARCommand {
 					tasks.cancel();
 				}
 				AreaLoader.areas.clear();
-				AreaReloader.getQueue().get().clear();
+				Queue.get().clear();
 				if (!DisplayCommand.entries.isEmpty()) {
 					DisplayCommand.removeAllDisplays();
 				}
@@ -51,8 +52,8 @@ public class CancelCommand extends ARCommand {
 				this.sendMessage(sender, cancelAll(), true);
 				return;
 			} else {
-				if (AreaReloader.getQueue().isQueued(input)) {
-					this.sendMessage(sender, success().replace("%area%", input).replace("%id%", String.valueOf(AreaReloader.getQueue().getTaskByName(input))), true);
+				if (Queue.isQueued(input)) {
+					this.sendMessage(sender, success().replace("%area%", input).replace("%id%", String.valueOf(Queue.getTaskByName(input))), true);
 					AreaMethods.kill(input);
 					return;
 				} else {

@@ -21,7 +21,7 @@ public class AreaScheduler {
 	private long delay;
 
 	public AreaScheduler(String area, long delay) {
-		if (AreaReloader.getQueue().isQueued(area) || areas.contains(this)) {
+		if (Queue.isQueued(area) || areas.contains(this)) {
 			updateDelay(area, delay);
 			return;
 		}
@@ -140,7 +140,7 @@ public class AreaScheduler {
 
 	public static void progress() {
 		for (AreaScheduler scheduler : areas) {
-			if (AreaReloader.getQueue().isQueued(scheduler.getArea())) {
+			if (Queue.isQueued(scheduler.getArea())) {
 				scheduler.setLastReset(System.currentTimeMillis());
 				continue;
 			}

@@ -9,8 +9,8 @@ import org.bukkit.command.CommandSender;
 
 import com.hedario.areareloader.fawe.AreaLoader;
 import com.hedario.areareloader.fawe.AreaMethods;
-import com.hedario.areareloader.fawe.AreaReloader;
 import com.hedario.areareloader.fawe.AreaScheduler;
+import com.hedario.areareloader.fawe.Queue;
 import com.hedario.areareloader.fawe.configuration.Manager;
 
 public class InfoCommand extends ARCommand {
@@ -55,7 +55,7 @@ public class InfoCommand extends ARCommand {
 		sendMessage(sender, "&6Has copied biomes &7» &e" + Manager.getAreasConfig().getBoolean("Areas." + area + ".HasCopiedBiomes"), false);
 		sendMessage(sender, "&6Is using fast mode &7» &e" + AreaMethods.fastMode, false);
 
-		if (AreaReloader.getQueue().isQueued(area)) {
+		if (Queue.isQueued(area)) {
 			if (AreaLoader.isInstance(area)) {
 				sendMessage(sender,"&6Currently loaded percentage &7» &e" + String.format("%.2f", AreaLoader.get(area).getPerc()) + "&6%", false);
 			}

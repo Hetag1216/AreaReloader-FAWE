@@ -7,7 +7,7 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
-import com.hedario.areareloader.fawe.AreaReloader;
+import com.hedario.areareloader.fawe.Queue;
 import com.hedario.areareloader.fawe.configuration.Manager;
 
 import net.md_5.bungee.api.ChatColor;
@@ -36,8 +36,12 @@ public class ListCommand extends ARCommand {
 			Collections.sort(strings);
 			Collections.reverse(strings);
 			for (String formatted : getPage(strings, 1, true)) {
-				if (AreaReloader.getQueue().isQueued(formatted)) {
-					formatted = formatted + " (Being loaded)";
+				if (Queue.isQueued(formatted)) {
+					if (Queue.getTaskByName(formatted) == -1) {
+						formatted = formatted + " (Being created)";
+					} else {
+						formatted = formatted + " (Being loaded)";
+					}
 				}
 				sendMessage(sender, "&e " + formatted, false);
 			}
@@ -56,7 +60,7 @@ public class ListCommand extends ARCommand {
 					return;
 				}
 				for (String formatted : getPage(strings, Integer.valueOf(arg), true)) {
-					if (AreaReloader.getQueue().isQueued(formatted)) {
+					if (Queue.isQueued(formatted)) {
 						formatted = formatted + " (Being loaded)";
 					}
 					sendMessage(sender, "&e" + formatted, false);

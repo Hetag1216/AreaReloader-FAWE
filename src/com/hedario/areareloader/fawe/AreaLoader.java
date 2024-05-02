@@ -35,18 +35,23 @@ public class AreaLoader {
 		if (sender != null) {
 			this.sender = sender;
 		}
-		if (AreaReloader.getQueue().isQueued(area) || areas.contains(this)) {
+		if (Queue.isQueued(area) && (Queue.getTaskByName(area) == -1)) {
+			
+			return;
+		}
+		if (Queue.isQueued(area) || areas.contains(this)) {
 			if (AreaReloader.debug) {
 				Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Loading -=-=-=-=-=-=-=-=-=-=-");
 				Manager.printDebug(area + " is already in the queue, it may be currently loading.");
 				Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
 			}
-			if (getSender() != null)
-				AreaMethods.sendMessage(getSender(), alreadyLoading().replace("%area%", area), true);
-			return;
-		}
-		if (AreaMethods.isAsyncCreation && AreaMethods.creations.contains(area)) {
-			AreaMethods.sendMessage(getSender(), stillCreating().replace("%area%", area), true);
+			if (getSender() != null) {
+				if (Queue.getTaskByName(area) == -1) {
+					AreaMethods.sendMessage(getSender(), stillCreating().replace("%area%", area), true);
+				} else {
+					AreaMethods.sendMessage(getSender(), alreadyLoading().replace("%area%", area), true);
+				}
+			}
 			return;
 		}
 		if (getSender() != null) {
@@ -124,10 +129,10 @@ public class AreaLoader {
 				}
 				completed.add(al);
 				// remove the area from the queue and cancel its running task.
-				if (AreaReloader.getQueue().isQueued(al.getArea())) {
-					AreaReloader.getQueue().remove(al.getArea(), AreaReloader.getQueue().getTaskByName(al.getArea()));
+				if (Queue.isQueued(al.getArea())) {
+					Queue.remove(al.getArea(), Queue.getTaskByName(al.getArea()));
 					Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Loading -=-=-=-=-=-=-=-=-=-=-");
-					Manager.printDebug("Area: " + al.getArea() + " with task id " + AreaReloader.getQueue().getTaskByName(al.getArea()) + " has been removed from the queue list.");
+					Manager.printDebug("Area: " + al.getArea() + " with task id " + Queue.getTaskByName(al.getArea()) + " has been removed from the queue list.");
 					Manager.printDebug(al.getArea() + " has succesfully been removed from the active sessions.");
 					Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
 				}
@@ -167,8 +172,8 @@ public class AreaLoader {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				if (!AreaReloader.getQueue().isQueued(getArea())) {
-					AreaReloader.getQueue().add(getArea(), this.getTaskId());
+				if (!Queue.isQueued(getArea())) {
+					Queue.get().put(getArea(), this.getTaskId());
 				}
 				progressAll();
 				if (areas.isEmpty()) {

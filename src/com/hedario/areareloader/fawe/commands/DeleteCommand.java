@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 
 import com.hedario.areareloader.fawe.AreaLoader;
 import com.hedario.areareloader.fawe.AreaMethods;
+import com.hedario.areareloader.fawe.Queue;
 import com.hedario.areareloader.fawe.configuration.Manager;
 
 public class DeleteCommand extends ARCommand {
@@ -24,7 +25,7 @@ public class DeleteCommand extends ARCommand {
 			return;
 		}
 		String area = args.get(0);
-		if (AreaMethods.isAsyncCreation && AreaMethods.creations.contains(area)) {
+		if (Queue.isQueued(area) && (Queue.getTaskByName(area) == -1)) {
 			AreaMethods.sendMessage(sender, AreaLoader.stillCreating().replace("%area%", area), true);
 			return;
 		}
