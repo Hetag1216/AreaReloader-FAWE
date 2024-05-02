@@ -78,7 +78,6 @@ public class Manager {
 				+ "&eSmaller length values &6will create more and lighter schematics, causing the area to split in multiple smaller sections.\n"
 				+ "This can be useful to better distribute the server's load after block placing but may result slower in the overall area's loading time.\n"
 				+ "Due to higher numbers of schematics being generated, the area creation process may take more time and cause a delay so be careful not to use too small of a value for large sized areas.");
-		config.addDefault("Commands.Create.Asynchronously", false);
 		config.addDefault("Commands.Create.Preparing", "Preparing to create &e%area%&6...");
 		config.addDefault("Commands.Create.Success", "&e%area%&6 has been succesfully created. Use the command &e/ar location &6to set a safe location for players inside the area whenever it loads!");
 		config.addDefault("Commands.Create.Failure", "Failed to create new area &e%area%&6.");
