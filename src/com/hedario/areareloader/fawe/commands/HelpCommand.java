@@ -34,7 +34,7 @@ public class HelpCommand extends ARCommand {
 			for (String s : getPage(strings, 1, false)) {
 				if (!s.equalsIgnoreCase(getPage(strings, 1, false).get(0))) {
 					String start = s.substring(0, 3);
-					this.sendMessage(sender, "&6" + start + " &e" + s.substring(4, s.length()), false);
+					this.sendMessage(sender, this.getPrimary() + start + " " + this.getSecondary() + s.substring(4, s.length()), false);
 				} else {
 					this.sendMessage(sender, getPage(strings, 1, false).get(0), false);
 				}
@@ -50,7 +50,7 @@ public class HelpCommand extends ARCommand {
 			for (String s : getPage(strings, Integer.valueOf(arg).intValue(), true)) {
 				if (!s.equalsIgnoreCase(getPage(strings, 1, false).get(0))) {
 					String start = s.substring(0, 3);
-					this.sendMessage(sender, "&6" + start + " &e" + s.substring(4, s.length()), false);
+					this.sendMessage(sender, this.getPrimary() + start + " " + this.getSecondary() + s.substring(4, s.length()), false);
 				} else {
 					this.sendMessage(sender, getPage(strings, 1, false).get(0), false);
 				}

@@ -50,6 +50,9 @@ public class Manager {
 		config.addDefault("Settings.Language.ChatPrefix", "&8[&6AreaReloader-FAWE&8]&6 ");
 		config.addDefault("Settings.Language.NoPermission", "You don't own sufficent permissions to run this command!");
 		config.addDefault("Settings.Language.MustBePlayer", "You must be a player to use this command!");
+		config.addDefault("Settings.Language.Colors.Primary", "GOLD");
+		config.addDefault("Settings.Language.Colors.Secondary", "YELLOW");
+		config.addDefault("Settings.Language.Colors.Neutral", "GRAY");
 		
 		config.addDefault("Settings.Debug.Enabled", false);
 		config.addDefault("Settings.Updater.Enabled", true);
@@ -109,6 +112,8 @@ public class Manager {
 		config.addDefault("Commands.Delete.Description", "&7Deletes an existing area.");
 		config.addDefault("Commands.Delete.Success", "&e%area%&6 was succesfully deleted.");
 		config.addDefault("Commands.Delete.InvalidArea", "&e%area%&6 does not exist!");
+		
+		config.addDefault("Commands.Placeholders.Description", "&7Lists all available placeholders.");
 
 		config.addDefault("Commands.Load.Description", "&7Loads an existing area.");
 		config.addDefault("Commands.Load.Preparing", "Preparing to load &e%area%&6.");

@@ -128,10 +128,10 @@ public class AreaReloader extends JavaPlugin implements Listener {
 	 * Gets the status of AreaReloader's hooks.
 	 * @return status
 	 */
-	public String getStatus() {
+	public String getStatus(ChatColor primary, ChatColor neutral) {
 		String enabled = ChatColor.GREEN + "Enabled";
 		String disabled = ChatColor.RED + "Disabled";
-		String status = ChatColor.GOLD + "Status: ";
+		String status = primary + "Status " + neutral + "» ";
 		if (fawe != null && fawe.isEnabled()) {
 			return status + enabled;
 		} else {

@@ -22,6 +22,7 @@ public abstract class ARCommand implements SubCommand {
 	private final String properUse;
 	private final String description;
 	private final String[] aliases;
+	private ChatColor primary, secondary, neutral;
 	public static Map<String, ARCommand> instances = new HashMap<>();
 
 	public ARCommand(String name, String properUse, String description, String[] aliases) {
@@ -32,6 +33,9 @@ public abstract class ARCommand implements SubCommand {
 		this.noPermissionMessage = ChatColor.translateAlternateColorCodes('&', Manager.getConfig().getString("Settings.Language.NoPermission"));
 		this.mustBePlayerMessage = ChatColor.translateAlternateColorCodes('&', Manager.getConfig().getString("Settings.Language.MustBePlayer"));
 		prefix = ChatColor.translateAlternateColorCodes('&', Manager.getConfig().getString("Settings.Language.ChatPrefix"));
+		primary = ChatColor.valueOf(Manager.getConfig().getString("Settings.Language.Colors.Primary"));
+		secondary = ChatColor.valueOf(Manager.getConfig().getString("Settings.Language.Colors.Secondary"));
+		neutral = ChatColor.valueOf(Manager.getConfig().getString("Settings.Language.Colors.Neutral"));
 		instances.put(name, this);
 	}
 
@@ -175,5 +179,29 @@ public abstract class ARCommand implements SubCommand {
 	
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
 		return new ArrayList<String>();
+	}
+
+	public ChatColor getPrimary() {
+		return primary;
+	}
+
+	public void setPrimary(ChatColor primary) {
+		this.primary = primary;
+	}
+
+	public ChatColor getSecondary() {
+		return secondary;
+	}
+
+	public void setSecondary(ChatColor secondary) {
+		this.secondary = secondary;
+	}
+
+	public ChatColor getNeutral() {
+		return neutral;
+	}
+
+	public void setNeutral(ChatColor neutral) {
+		this.neutral = neutral;
 	}
 }

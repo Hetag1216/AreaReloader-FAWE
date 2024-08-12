@@ -60,8 +60,6 @@ public class AreaScheduler {
 		}
 	}
 
-
-
 	public static void updateDelay(String area, long delay) {
 		for (AreaScheduler s : areas) {
 			if (s.getArea().equalsIgnoreCase(area)) {
@@ -72,7 +70,6 @@ public class AreaScheduler {
 		}
 		new AreaScheduler(area, delay);
 	}
-
 	public static long getRemainingTime(String area) {
 		for (AreaScheduler scheduler : areas) {
 			if (scheduler.getArea().equalsIgnoreCase(area)) {
@@ -160,7 +157,7 @@ public class AreaScheduler {
 				if (notifyOnReload) {
 					for (Player ops : Bukkit.getServer().getOnlinePlayers()) {
 						if (ops.isOp() || ops.hasPermission("areareloader.command.admin")) {
-							ops.sendMessage(AreaMethods.getPrefix() + "Automatically reloading area: " + ChatColor.YELLOW + scheduler.getArea() + ChatColor.GOLD + ".");
+							ops.sendMessage(ChatColor.translateAlternateColorCodes('&', AreaMethods.getPrefix() + "Automatically reloading area: &e" + scheduler.getArea() + "&6."));
 							ops.getWorld().playSound(ops.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1F, 0.3F);
 						}
 					}

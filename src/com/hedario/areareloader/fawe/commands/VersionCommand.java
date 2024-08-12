@@ -14,22 +14,22 @@ public class VersionCommand extends ARCommand {
 
 	@Override
 	public void execute(CommandSender sender, List<String> args) {
-		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 1)) {
+		if (!hasPermission(sender)) {
 			return;
 		}
-		sendMessage(sender, "&8&m-----&r "+ this.getPrefix() + "&8&m-----", false);
-		sendMessage(sender, "&6Version &7» &e" + AreaReloader.plugin.getDescription().getVersion(), false);
-		sendMessage(sender, "&6API version &7» &e" + AreaReloader.plugin.getDescription().getAPIVersion(), false);
-		sendMessage(sender, "&6Author &7» &e" + AreaReloader.plugin.getDescription().getAuthors().toString().replace("[", "").toString().replace("]", ""), false);
-		sendMessage(sender, "&6Compatible Minecraft Version(s) &7» &e1.17.1, 1.18.2, 1.19.4, 1.20, 1.20.1", false);
-		sendMessage(sender, "&6AreaReloader-FAWE's dependency &7» &e" + AreaReloader.plugin.getDescription().getDepend().toString().replace("[", "").toString().replace("]", ""), false);
-		sendMessage(sender, "&6AreaReloader-FAWE's Java requirements &7» &e Java 16+", false);
-		sendMessage(sender, "&6System Java version &7» &e" + System.getProperty("java.version"), false);
+		sendMessage(sender, this.getNeutral() + "&m-----&r "+ this.getPrefix() + this.getNeutral() + "&m-----", false);
+		sendMessage(sender, this.getPrimary() + "Version " + this.getNeutral() + "» " + this.getSecondary() + "" + AreaReloader.plugin.getDescription().getVersion(), false);
+		sendMessage(sender, this.getPrimary() + "API version " + this.getNeutral() + "» " + this.getSecondary() + "" + AreaReloader.plugin.getDescription().getAPIVersion(), false);
+		sendMessage(sender, this.getPrimary() + "Author " + this.getNeutral() + "» " + this.getSecondary() + "" + AreaReloader.plugin.getDescription().getAuthors().toString().replace("[", "").toString().replace("]", ""), false);
+		sendMessage(sender, this.getPrimary() + "Compatible Minecraft Version(s) " + this.getNeutral() + "» " + this.getSecondary() + "1.17.1, 1.18.2, 1.19.4, 1.20, 1.20.1", false);
+		sendMessage(sender, this.getPrimary() + "AreaReloader-FAWE's dependency " + this.getNeutral() + "» " + this.getSecondary() + "" + AreaReloader.plugin.getDescription().getDepend().toString().replace("[", "").toString().replace("]", ""), false);
+		sendMessage(sender, this.getPrimary() + "AreaReloader-FAWE's Java requirements " + this.getNeutral() + "» " + this.getSecondary() + " Java 16+", false);
+		sendMessage(sender, this.getPrimary() + "System Java version " + this.getNeutral() + "» " + this.getSecondary() + "" + System.getProperty("java.version"), false);
 		sendMessage(sender, "", false);
-		sendMessage(sender, "&6Page &7» &ewww.spigotmc.org/resources/areareloader-fawe.106585/", false);
-		sendMessage(sender, "&6Github &7» &egithub.com/Hetag1216/AreaReloader-FAWE", false);
-		sendMessage(sender, "&6Discord &7» &ediscord.gg/yqs9UJs", false);
-		sendMessage(sender, "&6My plugins &7» &ewww.spigotmc.org/members/_hetag1216_.243334/", false);
-		sendMessage(sender, "&6Donation &7» &ewww.paypal.me/Hetag1216", false);
+		sendMessage(sender, this.getPrimary() + "Page " + this.getNeutral() + "» " + this.getSecondary() + "www.spigotmc.org/resources/areareloader-fawe.106585/", false);
+		sendMessage(sender, this.getPrimary() + "Github " + this.getNeutral() + "» " + this.getSecondary() + "github.com/Hetag1216/AreaReloader-FAWE", false);
+		sendMessage(sender, this.getPrimary() + "Discord " + this.getNeutral() + "» " + this.getSecondary() + "discord.gg/yqs9UJs", false);
+		sendMessage(sender, this.getPrimary() + "My plugins " + this.getNeutral() + "» " + this.getSecondary() + "www.spigotmc.org/members/_hetag1216_.243334/", false);
+		sendMessage(sender, this.getPrimary() + "Donation " + this.getNeutral() + "» " + this.getSecondary() + "www.paypal.me/Hetag1216", false);
 	}
 }

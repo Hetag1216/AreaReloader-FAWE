@@ -14,15 +14,15 @@ public class HookCommand extends ARCommand {
 
 	@Override
 	public void execute(CommandSender sender, List<String> args) {
-		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 1)) {
+		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 0)) {
 			return;
 		}
-		sendMessage(sender, "&6-=-=-=-= " + this.getPrefix() + "&6=-=-=-=-", false);
-		sendMessage(sender, "&7- &eFastAsyncWorldEdit &7(&eFAWE&7)", false);
-		sendMessage(sender, AreaReloader.plugin.getStatus(), false);
+		sendMessage(sender, this.getNeutral() + "-=-=-=-= " + this.getPrefix() + this.getNeutral() + "=-=-=-=-", false);
+		sendMessage(sender, this.getNeutral() + "- " + this.getSecondary() + "FastAsyncWorldEdit " + this.getNeutral() + "(" + this.getSecondary() + "FAWE" + this.getNeutral() + ")", false);
+		sendMessage(sender, AreaReloader.plugin.getStatus(this.getPrimary(), this.getNeutral()), false);
 		if (AreaReloader.getWEInstance() != null) {
-			sendMessage(sender, "&6Version &7» &e" + AreaReloader.getWEInstance().getDescription().getVersion(), false);
+			sendMessage(sender, this.getPrimary() + "Version " + this.getNeutral() + "» " + this.getSecondary() + "" + AreaReloader.getWEInstance().getDescription().getVersion(), false);
 		}
-		sendMessage(sender, "&6-=-=-=-= -=- =-=-=-=-", false);
+		sendMessage(sender, this.getPrimary() + "-=-=-=-= -=- =-=-=-=-", false);
 	}
 }

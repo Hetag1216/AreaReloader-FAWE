@@ -10,8 +10,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import com.hedario.areareloader.fawe.Queue;
 import com.hedario.areareloader.fawe.configuration.Manager;
 
-import net.md_5.bungee.api.ChatColor;
-
 public class ListCommand extends ARCommand {
 	public ListCommand() {
 		super("list", "/ar list", Manager.getConfig().getString("Commands.List.Description"), new String[] { "list" });
@@ -66,7 +64,7 @@ public class ListCommand extends ARCommand {
 					sendMessage(sender, "&e" + formatted, false);
 				}
 			} else {
-				sendMessage(sender, ChatColor.YELLOW + arg + ChatColor.GOLD + "is not a number!", true);
+				sendMessage(sender, this.getSecondary() + arg + this.getPrimary() + "is not a number!", true);
 			}
 		}
 	}

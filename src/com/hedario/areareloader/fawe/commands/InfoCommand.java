@@ -33,37 +33,37 @@ public class InfoCommand extends ARCommand {
 		if (!Manager.getAreasConfig().contains("Areas." + area)) {
 			sendMessage(sender, LoadCommand.invalidArea().replaceAll("%area%", area), true);
 		}
-		sendMessage(sender, "&7-=-=-=-=-=-=-=-=-=-=- « &6" + area + " &7» -=-=-=-=-=-=-=-=-=-=-", false);
-		sendMessage(sender, "&6World &7» &e" + AreaMethods.getAreaInWorld(area), false);
-		sendMessage(sender, "&6First corner &7» &e" + AreaMethods.getAreaX(area) + "&7, &e" + AreaMethods.getAreaY(area) + "&7, &e" + AreaMethods.getAreaZ(area), false);
-		sendMessage(sender, "&6Second corner &7» &e" + AreaMethods.getAreaMaxX(area) + "&7, &e" + AreaMethods.getAreaMaxY(area) + "&7, &e" + AreaMethods.getAreaMaxZ(area), false);
-		sendMessage(sender, "&6Chunk size &7» &e" + AreaMethods.getAreaChunk(area), false);
-		sendMessage(sender, "&6Block length &7» &e" + ((AreaMethods.getAreaLength(area) != null && AreaMethods.getAreaLength(area) > 0) ? AreaMethods.getAreaLength(area) : 16), false);
-		sendMessage(sender, "&6Loading Interval &7» &6" + (AreaMethods.isGlobalInterval(area) ? AreaMethods.formatTime(AreaMethods.getInterval(area)) + " &7(&eGLOBAL&7)" : AreaMethods.formatTime(AreaMethods.getInterval(area))), false);
+		sendMessage(sender, this.getNeutral() + "-=-=-=-=-=-=-=-=-=-=- « " + this.getPrimary() + area + this.getNeutral() + " » -=-=-=-=-=-=-=-=-=-=-", false);
+		sendMessage(sender, this.getPrimary() + "World " + this.getNeutral() + "» " + this.getSecondary() + AreaMethods.getAreaInWorld(area), false);
+		sendMessage(sender, this.getPrimary() + "First corner " + this.getNeutral() + "» " + this.getSecondary() + AreaMethods.getAreaX(area) + this.getNeutral() + ", " + this.getSecondary() + AreaMethods.getAreaY(area)+ this.getNeutral() + ", " + this.getSecondary() + AreaMethods.getAreaZ(area), false);
+		sendMessage(sender, this.getPrimary() + "Second corner " + this.getNeutral() + "» " + this.getSecondary() + AreaMethods.getAreaMaxX(area) + this.getNeutral() + ", " + this.getSecondary() + AreaMethods.getAreaMaxY(area) + this.getNeutral() + ", " + this.getSecondary() + AreaMethods.getAreaMaxZ(area), false);
+		sendMessage(sender, this.getPrimary() + "Chunk size " + this.getNeutral() + "» " + this.getSecondary() + AreaMethods.getAreaChunk(area), false);
+		sendMessage(sender, this.getPrimary() + "Block length " + this.getNeutral() + "» " + this.getSecondary() + ((AreaMethods.getAreaLength(area) != null && AreaMethods.getAreaLength(area) > 0) ? AreaMethods.getAreaLength(area) : 16), false);
+		sendMessage(sender, this.getPrimary() + "Loading Interval " + this.getNeutral() + "» " + this.getSecondary() + (AreaMethods.isGlobalInterval(area) ? AreaMethods.formatTime(AreaMethods.getInterval(area)) + " " + this.getNeutral() + "(" + this.getSecondary() + "GLOBAL" + this.getNeutral() + ")" : AreaMethods.formatTime(AreaMethods.getInterval(area))), false);
 		
 		if (Manager.getAreasConfig().getBoolean("Areas." + area + ".SafeLocation.Enabled")) {
 			World world = Bukkit.getWorld(Manager.getAreasConfig().getString("Areas." + area + ".SafeLocation.World"));
 			double x = Manager.getAreasConfig().getDouble("Areas." + area + ".SafeLocation.X");
 			double y = Manager.getAreasConfig().getDouble("Areas." + area + ".SafeLocation.Y");
 			double z = Manager.getAreasConfig().getDouble("Areas." + area + ".SafeLocation.Z");
-			sendMessage(sender, "&6Safe location &7» &e" + world.getName() + "&7, &e" + x + "&7, &e" + y + "&7, &e" + z, false);
-			sendMessage(sender, "&6Safe location speed &7» &e" + Manager.getAreasConfig().getInt("Areas." + area + ".SafeLocation.Settings.Speed"), false);
-			sendMessage(sender, "&6Safe location interval &7» &e" + Manager.getAreasConfig().getInt("Areas." + area + ".SafeLocation.Settings.Interval"), false);
+			sendMessage(sender, this.getPrimary() + "Safe location " + this.getNeutral() + "» " + this.getSecondary() + world.getName() + this.getNeutral() + ", " + this.getSecondary() + x + this.getNeutral() + ", " + this.getSecondary() + y + this.getNeutral() + ", " + this.getSecondary() + z, false);
+			sendMessage(sender, this.getPrimary() + "Safe location speed " + this.getNeutral() + "» " + this.getSecondary() + Manager.getAreasConfig().getInt("Areas." + area + ".SafeLocation.Settings.Speed"), false);
+			sendMessage(sender, this.getPrimary() + "Safe location interval " + this.getNeutral() + "» " + this.getSecondary() + Manager.getAreasConfig().getInt("Areas." + area + ".SafeLocation.Settings.Interval"), false);
 		}
-		sendMessage(sender, "&6Is being displayed &7» &e" + display, false);
-		sendMessage(sender, "&6Has copied entities &7» &e" + Manager.getAreasConfig().getBoolean("Areas." + area + ".HasCopiedEntities"), false);
-		sendMessage(sender, "&6Has copied biomes &7» &e" + Manager.getAreasConfig().getBoolean("Areas." + area + ".HasCopiedBiomes"), false);
-		sendMessage(sender, "&6Is using fast mode &7» &e" + AreaMethods.fastMode, false);
+		sendMessage(sender, this.getPrimary() + "Is being displayed " + this.getNeutral() + "» " + this.getSecondary() + display, false);
+		sendMessage(sender, this.getPrimary() + "Has copied entities " + this.getNeutral() + "» " + this.getSecondary() + Manager.getAreasConfig().getBoolean("Areas." + area + ".HasCopiedEntities"), false);
+		sendMessage(sender, this.getPrimary() + "Has copied biomes " + this.getNeutral() + "» " + this.getSecondary() + Manager.getAreasConfig().getBoolean("Areas." + area + ".HasCopiedBiomes"), false);
+		sendMessage(sender, this.getPrimary() + "Is using fast mode " + this.getNeutral() + "» " + this.getSecondary() + AreaMethods.fastMode, false);
 
 		if (Queue.isQueued(area)) {
 			if (AreaLoader.isInstance(area)) {
-				sendMessage(sender,"&6Currently loaded percentage &7» &e" + String.format("%.2f", AreaLoader.get(area).getPerc()) + "&6%", false);
+				sendMessage(sender,this.getPrimary() + "Currently loaded percentage " + this.getNeutral() + "» " + this.getSecondary() + String.format("%.2f", AreaLoader.get(area).getPerc()) + this.getPrimary() + "%", false);
 			}
 		}
-		sendMessage(sender, "&6Is automatically reloading &7» &e" + Manager.getAreasConfig().getBoolean("Areas." + area + ".AutoReload.Enabled"), false);
+		sendMessage(sender, this.getPrimary() + "Is automatically reloading " + this.getNeutral() + "» " + this.getSecondary() + Manager.getAreasConfig().getBoolean("Areas." + area + ".AutoReload.Enabled"), false);
 		if (Manager.getAreasConfig().getBoolean("Areas." + area + ".AutoReload.Enabled") == true) {
-			sendMessage(sender, "&6Auto reloading time &7» &e" 	+ AreaMethods.formatTime(Manager.getAreasConfig().getLong("Areas." + area + ".AutoReload.Time")), false);
-			sendMessage(sender, "&6Next auto reload in &7» &e" + AreaMethods.formatTime(AreaScheduler.getRemainingTime(area)), false);
+			sendMessage(sender, this.getPrimary() + "Auto reloading time " + this.getNeutral() + "» " + this.getSecondary() + AreaMethods.formatTime(Manager.getAreasConfig().getLong("Areas." + area + ".AutoReload.Time")), false);
+			sendMessage(sender, this.getPrimary() + "Next auto reload in " + this.getNeutral() + "» " + this.getSecondary() + AreaMethods.formatTime(AreaScheduler.getRemainingTime(area)), false);
 		}
 		return;
 	}
