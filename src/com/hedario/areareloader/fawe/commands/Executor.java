@@ -38,6 +38,7 @@ public class Executor {
 		new DisplayCommand();
 		new CancelCommand();
 		new LocationCommand();
+		new PlaceholdersCommand();
 		help = Manager.getConfig().getStringList("Commands.HelpLines");
 
 		CommandExecutor exe = new CommandExecutor() {
@@ -52,7 +53,7 @@ public class Executor {
 				for (ARCommand command : ARCommand.instances.values()) {
 					if (Arrays.asList(command.getAliases()).contains(args[0].toLowerCase())) {
 						try {
-						command.execute(s, sendingArgs);
+							command.execute(s, sendingArgs);
 						} catch (Exception e) {
 							Manager.printDebug(command.getName(), e, s);
 						}
