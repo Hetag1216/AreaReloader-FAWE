@@ -72,11 +72,6 @@ public class AreaMethods {
 		return isInteger(s, 10);
 	}
 	
-	/**
-	 * Formats time from milliseconds to: <b>days, hours, minutes, seconds</b>
-	 * @param time must be in milliseconds
-	 * @return a string with the formatted value
-	 */
 	public static String formatTime(final long time) {
 		String result = new String();
 		if (time < 0) {
@@ -86,17 +81,18 @@ public class AreaMethods {
 		final long hours = TimeUnit.MILLISECONDS.toHours(time) % 24;
 		final long minutes = TimeUnit.MILLISECONDS.toMinutes(time) % 60;
 		final long seconds = TimeUnit.MILLISECONDS.toSeconds(time) % 60;
+		final long milliseconds = time % 1000;
 		if (days > 0) 
-			result += String.valueOf(days) + " days ";
+			result += "" + days + "d ";
 		if (hours > 0)
-			result += String.valueOf(hours) + " hours ";
+			result += "" + hours + "h ";
 		if (minutes > 0) 
-			result += String.valueOf(minutes) + " minutes ";
+			result += "" + minutes + "m ";
 		if (seconds >= 0) {
-			if (time > 0) {
-				result += String.valueOf(seconds) + "." + (String.valueOf(time).length() > 2 ? String.valueOf(time).substring(0, 1) : String.valueOf(time)) + " seconds";
+			if (milliseconds > 0) {
+				result += "" + seconds + "." + String.valueOf(milliseconds).substring(0, 1) + "s";
 			} else {
-				result += String.valueOf(seconds) + " seconds";
+				result += "" + seconds + "s";
 			}
 		}
 		return result;
