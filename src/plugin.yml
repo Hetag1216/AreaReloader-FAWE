@@ -7,6 +7,7 @@ depend: ['FastAsyncWorldEdit']
 commands:
   ar:
     usage: /<command>
+    aliases: [ar, areareloader]
     description: AR main command.
 permissions:
   areareloader.command.admin: 
