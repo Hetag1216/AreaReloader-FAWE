@@ -11,8 +11,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.hedario.areareloader.fawe.commands.Executor;
 import com.hedario.areareloader.fawe.configuration.Manager;
-import com.hedario.areareloader.fawe.reflection.Metrics;
-import com.hedario.areareloader.fawe.reflection.UpdateChecker;
+import com.hedario.areareloader.fawe.util.Metrics;
+import com.hedario.areareloader.fawe.util.PAPIExpansion;
+import com.hedario.areareloader.fawe.util.UpdateChecker;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class AreaReloader extends JavaPlugin implements Listener {
@@ -83,6 +84,10 @@ public class AreaReloader extends JavaPlugin implements Listener {
 		} else {
 			log.info("Metrics will be disabled.");
 		}
+		
+		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new PAPIExpansion(this).register();
+        }
 		log.info("Succesfully enabled AreaReloader-FAWE!");
 		log.info("-=-=-=-= -=- =-=-=-=-");
 		

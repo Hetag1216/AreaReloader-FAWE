@@ -1,4 +1,4 @@
-package com.hedario.areareloader.fawe.reflection;
+package com.hedario.areareloader.fawe.util;
 
 import java.io.IOException;
 import java.io.InputStream;

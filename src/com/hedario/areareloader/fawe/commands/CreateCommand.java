@@ -55,26 +55,30 @@ public class CreateCommand extends ARCommand {
 			sendMessage(sender, invalidValue(), true);
 			return;
 		}
-
-		if (this.isNumeric(args.get(3))) {
-			length = Integer.valueOf(args.get(3));
-			if (length < 0) {
+		
+		if (args.size() > 3) {
+			if (this.isNumeric(args.get(3))) {
+				length = Integer.valueOf(args.get(3));
+				if (length < 0) {
+					sendMessage(sender, invalidLength(), true);
+					return;
+				}
+			} else {
 				sendMessage(sender, invalidLength(), true);
 				return;
 			}
-		} else {
-			sendMessage(sender, invalidLength(), true);
-			return;
-		}
-		
-		final String async = args.get(4);
-		if (async.contains("true")) {
-			isAsync = true;
-		} else if (async.contains("false")) {
-			isAsync = false;
-		} else {
-			sendMessage(sender, invalidValue(), true);
-			return;
+			
+			if (args.size() > 4) {
+				final String async = args.get(4);
+				if (async.contains("true")) {
+					isAsync = true;
+				} else if (async.contains("false")) {
+					isAsync = false;
+				} else {
+					sendMessage(sender, invalidValue(), true);
+					return;
+				}
+			}
 		}
 		
 		if (skipE) {

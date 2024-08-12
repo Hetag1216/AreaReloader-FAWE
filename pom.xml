@@ -18,6 +18,11 @@
 			<id>papermc</id>
 			<url>https://papermc.io/repo/repository/maven-public/</url>
 		</repository>
+		<!-- PAPI  -->
+		<repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
 	</repositories>
 	<!-- DEPENDENCIES MANAGEMENT -->
 	<dependencyManagement>
@@ -48,7 +53,6 @@
 			<artifactId>FastAsyncWorldEdit-Core</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.fastasyncworldedit</groupId>
 			<artifactId>FastAsyncWorldEdit-Bukkit</artifactId>
@@ -65,6 +69,13 @@
 			<groupId>io.papermc</groupId>
 			<artifactId>paperlib</artifactId>
 		</dependency>
+		<!-- PAPI -->
+		<dependency>
+         <groupId>me.clip</groupId>
+          <artifactId>placeholderapi</artifactId>
+          <version>2.11.6</version>
+         <scope>provided</scope>
+        </dependency>
 	</dependencies>
 
 	<pluginRepositories>
