@@ -2,6 +2,10 @@ package com.hedario.areareloader.fawe;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
+/**
+ * @deprecated Up for removal, queueing is now handled in the new {@link Loader}
+ */
+@Deprecated()
 public class Queue {
 	private static HashMap<String, Integer> QUEUE;
 	private static AreaReloader plugin;

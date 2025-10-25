@@ -34,6 +34,8 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 
+import net.md_5.bungee.api.ChatColor;
+
 public class AreaMethods {
 	static AreaReloader plugin;
 	public static boolean fastMode = Manager.getConfig().getBoolean("Settings.AreaLoading.FastMode");
@@ -148,7 +150,7 @@ public class AreaMethods {
 	 * 
 	 * @param player       The player creating the area
 	 * @param area         The name
-	 * @param length         The length of the area <b>
+	 * @param length       The length of the area <b>
 	 *                     <p>
 	 *                     The default value is supposed to comprehend the whole
 	 *                     chunk, so the default one should be 16 as specified in
@@ -395,7 +397,18 @@ public class AreaMethods {
 		AreaReloader.plugin.reloadConfig();
 	}
 	
+	public static ChatColor getPrimaryColor() {
+		return ChatColor.GOLD;
+	}
+	
+	public static ChatColor getSecondaryColor() {
+		return ChatColor.YELLOW;
+	}
+	
 	public static void sendMessage(CommandSender sender, String message, boolean prefix) {
+		if (sender == null) {
+			return;
+		}
 		if (prefix) {
 			sender.sendMessage(ARCommand.formatColors(getPrefix() + message));
 		} else {

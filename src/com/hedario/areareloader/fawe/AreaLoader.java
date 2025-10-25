@@ -16,6 +16,12 @@ import com.hedario.areareloader.fawe.configuration.Manager;
 import com.hedario.areareloader.fawe.events.AreaCompleteEvent;
 import com.hedario.areareloader.fawe.events.AreaLoadEvent;
 import com.sk89q.worldedit.WorldEditException;
+/**
+ * A class to load areas and restore them.
+ * @deprecated Confirmed to duplicate entities upon area loading, tasks don't stop correctly.<br>
+ * This class is up for removal, refactored at {@link Loader}.
+ */
+@Deprecated
 public class AreaLoader {
 	public static List<AreaLoader> areas = new ArrayList<AreaLoader>();
 	private String area;
@@ -32,8 +38,8 @@ public class AreaLoader {
 	private float curr_perc;
 
 	public AreaLoader(String area, int x, int z, int length, Location location, CommandSender sender) {
-		if (sender != null) {
-			this.sender = sender;
+		if (areas.contains(this)) {
+			return;
 		}
 		if (Queue.isQueued(area) || areas.contains(this)) {
 			if (AreaReloader.debug) {
@@ -42,11 +48,6 @@ public class AreaLoader {
 				Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
 			}
 			return;
-		}
-		if (getSender() != null) {
-			Bukkit.getServer().getPluginManager().callEvent(new AreaLoadEvent(getSender(), area));
-		} else {
-			Bukkit.getServer().getPluginManager().callEvent(new AreaLoadEvent(area));
 		}
 		
 		this.area = area;
@@ -60,8 +61,15 @@ public class AreaLoader {
 		this.location = location;
 		fakeTime = System.currentTimeMillis();
 		time = System.currentTimeMillis();
+		if (sender != null) {
+			this.sender = sender;
+			Bukkit.getServer().getPluginManager().callEvent(new AreaLoadEvent(getSender(), area));
+		} else {
+			Bukkit.getServer().getPluginManager().callEvent(new AreaLoadEvent(area));
+		}
 		areas.add(this);
 		manage();
+		
 	}
 	
 	public static void init() {

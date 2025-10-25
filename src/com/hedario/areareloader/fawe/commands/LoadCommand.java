@@ -6,8 +6,8 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 
-import com.hedario.areareloader.fawe.AreaLoader;
 import com.hedario.areareloader.fawe.AreaMethods;
+import com.hedario.areareloader.fawe.Loader;
 import com.hedario.areareloader.fawe.Queue;
 import com.hedario.areareloader.fawe.configuration.Manager;
 
@@ -35,7 +35,8 @@ public class LoadCommand extends ARCommand {
 			return;
 		}
 		Location location = new Location(AreaMethods.getWorld(area), AreaMethods.getAreaX(area), AreaMethods.getAreaY(area), AreaMethods.getAreaZ(area));
-		new AreaLoader(area, AreaMethods.getAreaSizeX(area), AreaMethods.getAreaSizeZ(area), AreaMethods.getAreaChunk(area), location, sender);
+		//new AreaLoader(area, AreaMethods.getAreaSizeX(area), AreaMethods.getAreaSizeZ(area), AreaMethods.getAreaChunk(area), location, sender);
+		new Loader(area, location, AreaMethods.getAreaSizeX(area), AreaMethods.getAreaSizeZ(area), sender);
 		sendMessage(sender, prepare().replace("%area%", area), true);
 	}
 
