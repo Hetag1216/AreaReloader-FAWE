@@ -86,4 +86,12 @@ public class PAPIExpansion extends PlaceholderExpansion {
 			return null;
 		}
 	}
+
+	public AreaReloader getInstance() {
+		return instance;
+	}
+
+	public void setInstance(AreaReloader instance) {
+		this.instance = instance;
+	}
 }
