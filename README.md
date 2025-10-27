@@ -1,89 +1,233 @@
 # AreaReloader
-![Core Icon](https://media.discordapp.net/attachments/595364073147728025/1049116713872011424/background2_2.jpg)
+![SpigotMC](https://img.shields.io/badge/platform-Spigot%20%7C%20Paper-yellow?style=flat-square)
+![Made with 💙](https://img.shields.io/badge/Made%20with-%F0%9F%92%99-blue?style=flat-square)
 
-An easy to use Spigot plugin to roll back areas at the stage they were saved!
+<strong>AreaReloader-FAWE is AreaReloader's mirror plugin compatible with FastAsyncWorldEdit.</strong><br>
+This plugin lets you turn any FastAsyncWorldEdit's selection into a restorable region.<br>
+AreaReloader-FAWE creates a schematic copy of the selection, split into smaller sections in order to distribute server's load, allowing smoother pasting/regeneration.<br>
+Each saved area can be restored manually with a command or automatically on a timed schedule.<br>
+The restore interval is fully customizable, making it ideal for regenerating resource areas, PvP arenas, dungeons, or any place that needs resetting.
+    
+# Compatibility
+This version of the plugin will only work with [FAWE](https://modrinth.com/plugin/fastasyncworldedit), if you use WorldEdit (standard WE) you must use the mirror plugin, [AreaReloader](https://modrinth.com/plugin/areareloader).
 
-![Core Icon](https://media.discordapp.net/attachments/595364073147728025/1049105316312264794/commands.jpg)
+<details>
+<summary>Commands</summary>
 
-/ar - Shows plugin's help lines
+# Commands
+- /ar - Shows plugin's help lines
+- /ar help <Command> - Shows general help or specific help when a command is specified
+- /ar version - Shows the current plugin's version
+- /ar create <AreaName> <CopyEntities> - Creates a new copy of the selected area.
+The copy entities parameter will accept a true or false value, which will decide whether or not to copy entities inside the selected area at the moment of creation.
+If set to true, whenever the area gets loaded, saved entities will be respawned.
+- /ar load <AreaName> - Loads an existing area
+- /ar delete <AreaName> - Deletes an existing area
+- /ar list - Lists all existing areas
+- /ar hook - Shows a help interface for the plugin's hooks and
+dependencies
+- /ar info - Shows information about a specific existing area
+- /ar reload - Reloads AreaReloader's configuration file
+- /ar display <AreaName> - Displays particles around areas
+- /ar cancel <AreaName, ALL> - Cancels the loading of one or all areas.
+- /ar location <AreaName> <set, teleport> - Allows you to create a safe location for players.
+- /ar placeholders - Lists all the available placeholders (requires PAPI).
 
-/ar help <Command> - Shows general help or specific help when a command is spefied
+</details>
+<details>
+<summary>Permissions</summary>
 
-/ar version - Shows the current plugin's version
+# Permissions
+- areareloader.command.help - Gives access to the /ar help command
+- areareloader.command.version - Gives access to the /ar version command
+- areareloader.command.create - Gives access to the /ar create command
+- areareloader.command.load - Gives access to the /ar load command
+- areareloader.command.delete - Gives access to the /ar delete command
+- areareloader.command.list - Gives access to the /ar list command
+- areareloader.command.hook - Gives access to the /ar hook command
+- areareloader.command.info - Gives access to the /ar info command
+- areareloader.command.reload - Gives access to the /ar reload command
+- areareloader.command.display - Gives access to /ar display command
+- areareloader.command.cancel- Gives access to /ar cancel command
+- areareloader.command.location - Gives access to /ar location command
+- areareloader.command.placeholders - Gives access to /ar placeholders command
+- areareloader.command.admin - Gives access to all commands
 
-/ar create <AreaName> - Creates a new copy of the selected area
+</details>
 
-/ar load <AreaName> - Loads an existing area
+# Configuration
+There are two main configuration files;
+**config.yml** allows you to customise language and general settings, whereas the **areas.yml** config contains all the areas' details and custom settings per area, such as auto loading and intervals.
+<details>
+<summary>config.yml</summary>
 
-/ar delete <AreaName> - Deletes an existing area
+<table>
+  <tr>
+    <th>Setting</th>
+    <th>Default value</th>
+    <th>Values</th>
+    <th>Description</td>
+  </tr>
+  <tr>
+    <td><strong>Debug</strong></td>
+    <td>true</td>
+    <td>true/false</td>
+    <td>If enabled prints all the plugin's processes to the debug file located at /AreaRealoder-FAWE/debug.txt.</td>
+  </tr>
+  <tr>
+    <td><strong>Updater</strong></td>
+    <td>true</td>
+    <td>true/false</td>
+    <td>If enabled, automatically checks for plugin updates.</td>
+  </tr>
+  <tr>
+    <td><strong>Metrics</strong></td>
+    <td>true</td>
+    <td>true/false</td>
+    <td>If enabled retrieves anonymous server's statistics to help keep track of the plugin's usage.</td>
+  </tr>
+  <tr>
+    <td><strong>Announcer</strong></td>
+    <td>true</td>
+    <td>true/false</td>
+    <td>If enabled announces the plugin's branding message.</td>
+  </tr>
+</table>
 
-/ar list - Lists all existing areas
+**AreaLoading settings**
+<table>
+  <tr>
+    <th>Setting</th>
+    <th>Default value</th>
+    <th>Values</th>
+    <th>Description</td>
+  </tr>
+  <tr>
+    <td><strong>Global interval</strong></td>
+    <td>500</td>
+    <td>Any value above 0</td>
+    <td>Sets an interval <strong>(in milliseconds)</strong> all areas use to wait between section loads if using the global option.<br></td>
+  </tr>
+    <tr>
+    <td><strong>Fast mode</strong></td>
+      <td>true</td>
+      <td>true/false</td>
+      <td>Whether or not to use FAWE's fast mode; depending on your server performance you may enable or disable this function.</td>
+  </tr>
+    <tr>
+    <td><strong>Percentage</strong></td>
+      <td>15</td>
+      <td>Any value above 0</td>
+      <td>Sets the area loading progress percentage to broadcast to the player when loading an area.</td>
+  </tr>
+  </table>
 
-/ar hook - Shows a help interface for the plugin's hooks and dependencies
+  **AutoReload settings**
+<table>
+  <tr>
+    <th>Setting</th>
+    <th>Default value</th>
+    <th>Values</th>
+    <th>Description</td>
+  </tr>
+  <tr>
+    <td><strong>Checker</strong></td>
+    <td>true</td>
+    <td>true/false</td>
+    <td>Enable or disable the area scheduler function.</td>
+  </tr>
+    <tr>
+    <td><strong>Notify admins</strong></td>
+      <td>true</td>
+      <td>true/false</td>
+      <td>Whether or not to notify players with the admin permission whenever an area automatically loads.</td>
+  </tr>
+    <tr>
+    <td><strong>Notify console</strong></td>
+      <td>true</td>
+      <td>true/false</td>
+      <td>Whether or not to notify console whenever an area automatically loads.</td>
+  </tr>
+  </table>
+</details>
 
-/ar info - Shows information about a specific existing area
 
-/ar reload - Reloads AreaReloader's configuration file
+<details>
+<summary>areas.yml</summary>
+  <strong>Loading interval settings</strong>
+  <table>
+  <tr>
+    <th>Setting</th>
+    <th>Default value</th>
+    <th>Values</th>
+    <th>Description</td>
+  </tr>
+  <tr>
+    <td><strong>Global</strong></td>
+    <td>true</td>
+    <td>true/false</td>
+    <td>Whether or not the area should use the global interval between section loads.</td>
+  </tr>
+    <tr>
+    <td><strong>Time</strong></td>
+      <td>200</td>
+      <td>Any value above 0</td>
+      <td>The time interval <strong>(in milliseconds)</strong> the area must wait between section loads.<br>
+      <strong>Note:</strong> Global interval must be disabled for this area to use its custom interval.</td>
+  </tr>
+  </table>
+  <strong> Auto reload settings</strong>
+    <table>
+      <tr>
+        <th>Setting</th>
+        <th>Default value</th>
+        <th>Values</th>
+        <th>Description</td>
+      </tr>
+      <tr>
+        <td>Enabled</td>
+        <td>true</td>
+        <td>true/false</td>
+        <td>Enables/disables the area to automatically reload.</td>
+      </tr>
+      <tr>
+        <td>Time</td>
+        <td>200000</td>
+        <td>Any value above 0</td>
+        <td>Sets the interval <strong>(in milliseconds)</strong> for the area to automatically reload.</td>
+      </tr>
+      </table>
+      
+</details>
 
-/ar display <AreaName> - Displays particles around an area
-  
-/ar cancel <AreaName, All> - Cancel one or all areas from loading
+# Issues
+Open a new issue [here](https://github.com/Hetag1216/AreaReloader-FAWE/issues).
+<br>
+When opening a new issue please add and specify:
 
-![Core Icon](https://media.discordapp.net/attachments/595364073147728025/1049105316073177168/permissions.jpg)
+- Debug's file (located at AreaReloader-FAWE\debug.txt, can be enabled through the config).
+- Provider's version (spigot, paper, bukkit) - /version;
+- AreaReloader's version - /ar version;
+- FAWE's version;
+- Where/when you met the issue, as in what action had been fired at the time (command, auto reloading, etc.).
+- Error log (either from console or debug file).
 
-areareloader.command.help - Gives access to the /ar help command
+# Dependencies
+The plugin depends on WorldEdit, it will work with any WE's version your server supports.
 
-areareloader.command.version - Gives access to the /ar version command
+# Support
 
-areareloader.command.create - Gives access to the /ar create command
+<p align="center">
+    <a href="https://discord.com/invite/yqs9UJs">
+        <img src="https://i.imgur.com/JgDt1Fl.png" width="300" alt="discord">
+    </a>
+    <br>
+    <i>I do my best to provide support for my projects over discord.
+      <br>If you'd have questions or support requests feel free to join!</i>
+</p>
 
-areareloader.command.load - Gives access to the /ar load command
-
-areareloader.command.delete - Gives access to the /ar delete command
-
-areareloader.command.list - Gives access to the /ar list command
-
-areareloader.command.hook - Gives access to the /ar hook command
-
-areareloader.command.info - Gives access to the /ar info command
-
-areareloader.command.reload - Gives access to the /ar reload command
-  
-areareloader.command.cancel - Gives access to the /ar cancel command
-
-areareloader.command.admin - Gives access to all commands
-
-![Core Icon](https://media.discordapp.net/attachments/595364073147728025/1049105315699892244/configuration.jpg)
-
-The main configuration file where you will be able to edit your own language settings is named as "config.yml".
-The config is very easy to understand as it is composed by regular language strings, however, the plugin brings some variables and new configuration settings that affect the plugin.
-
-~~------------------------------------------------------------------------------------------------------------------------------------~~
-
-*Guide to debugging*: 
-Open a new issue in the [Issues category](https://github.com/Hetag1216/AreaReloader/issues)
-When opening a new issue please specify:
-- Spigot's version - /version;
-- FastAsyncWorldEdit's version;
-- Where/when you met the issue by specifying the command which threw an error and specify where the operations stop, debugging will show every operation ran when executing commands.
-- Paste console's error logs (if there are any)
-
-The debug logs will be printed to the command sender.
-Default value: false (turn 'false' to true and then restart the server to enable the debugging or any config changes)
-
-~~------------------------------------------------------------------------------------------------------------------------------------~~
-
-Area Interval: This is the amount of time set in milliseconds that decides the delay between each section loading whenever an area is being loaded.
-I recommend keeping this value as the default one as a higher or lower value could affect your server's performance in bad or good, depending on the server's resources and tasks that are currently running at the moment of the area's load, so choose a wise value whenever changing this value.
-Default value: 500
-(0.5 seconds)
-
-~~------------------------------------------------------------------------------------------------------------------------------------~~
-
-AreaScheduler: This function has been implemented in version 1.3.
-With this brand new function, you will be able to automatically reload areas after x amount of time which can be set for each existing area in the areas.yml config.
-In order to use this function the global checker must be true (set true by default) and the AutoReload function under "Areas" in the areas.yml configuration file must be enabled for each area that has to automatically restore.
-
-Join now the discord for live support and live updates on the projects!
-![Core Icon](https://cdn.discordapp.com/attachments/595364073147728025/687819024457007140/discord_header.png)
-https://discord.gg/yqs9UJs
+# Metrics
+This plugin collects anonymous server statistics which helps me keep track of the plugin's usage.<br>
+I invite you to keep this setting on as it contributes to boosting my dedication and work towards my projects!
+Provided by [bStats](https://bstats.org/).
+<img src="https://bstats.org/signatures/bukkit/AreaReloader-FAWE.svg">
