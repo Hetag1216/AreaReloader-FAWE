@@ -7,10 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 
-import com.hedario.areareloader.fawe.AreaLoader;
 import com.hedario.areareloader.fawe.AreaMethods;
 import com.hedario.areareloader.fawe.AreaScheduler;
-import com.hedario.areareloader.fawe.Queue;
+import com.hedario.areareloader.fawe.Loader;
 import com.hedario.areareloader.fawe.configuration.Manager;
 
 public class InfoCommand extends ARCommand {
@@ -24,15 +23,17 @@ public class InfoCommand extends ARCommand {
 			return;
 		}
 		String area = args.get(0);
+		if (!Manager.areas.getConfig().contains("Areas." + area)) {
+			sendMessage(sender, LoadCommand.invalidArea().replace("%area%", area), true);
+			return;
+		}
 		String display = null;
 		if (DisplayCommand.getDisplayedAreas().contains(area)) {
 			display = "true";
 		} else {
 			display = "false";
 		}
-		if (!Manager.getAreasConfig().contains("Areas." + area)) {
-			sendMessage(sender, LoadCommand.invalidArea().replaceAll("%area%", area), true);
-		}
+		
 		sendMessage(sender, this.getNeutral() + "-=-=-=-=-=-=-=-=-=-=- « " + this.getPrimary() + area + this.getNeutral() + " » -=-=-=-=-=-=-=-=-=-=-", false);
 		sendMessage(sender, this.getPrimary() + "World " + this.getNeutral() + "» " + this.getSecondary() + AreaMethods.getAreaInWorld(area), false);
 		sendMessage(sender, this.getPrimary() + "First corner " + this.getNeutral() + "» " + this.getSecondary() + AreaMethods.getAreaX(area) + this.getNeutral() + ", " + this.getSecondary() + AreaMethods.getAreaY(area)+ this.getNeutral() + ", " + this.getSecondary() + AreaMethods.getAreaZ(area), false);
@@ -53,13 +54,10 @@ public class InfoCommand extends ARCommand {
 		sendMessage(sender, this.getPrimary() + "Is being displayed " + this.getNeutral() + "» " + this.getSecondary() + display, false);
 		sendMessage(sender, this.getPrimary() + "Has copied entities " + this.getNeutral() + "» " + this.getSecondary() + Manager.getAreasConfig().getBoolean("Areas." + area + ".HasCopiedEntities"), false);
 		sendMessage(sender, this.getPrimary() + "Has copied biomes " + this.getNeutral() + "» " + this.getSecondary() + Manager.getAreasConfig().getBoolean("Areas." + area + ".HasCopiedBiomes"), false);
-		sendMessage(sender, this.getPrimary() + "Is using fast mode " + this.getNeutral() + "» " + this.getSecondary() + AreaMethods.fastMode, false);
 
-		if (Queue.isQueued(area)) {
-			if (AreaLoader.isInstance(area)) {
-				sendMessage(sender,this.getPrimary() + "Currently loaded percentage " + this.getNeutral() + "» " + this.getSecondary() + String.format("%.2f", AreaLoader.get(area).getPerc()) + this.getPrimary() + "%", false);
+			if (Loader.getInstances().containsKey(area)) {
+				sendMessage(sender,this.getPrimary() + "Currently loaded percentage " + this.getNeutral() + "» " + this.getSecondary() + String.format("%.2f", Loader.get(area).perc) + this.getPrimary() + "%", false);
 			}
-		}
 		sendMessage(sender, this.getPrimary() + "Is automatically reloading " + this.getNeutral() + "» " + this.getSecondary() + Manager.getAreasConfig().getBoolean("Areas." + area + ".AutoReload.Enabled"), false);
 		if (Manager.getAreasConfig().getBoolean("Areas." + area + ".AutoReload.Enabled") == true) {
 			sendMessage(sender, this.getPrimary() + "Auto reloading time " + this.getNeutral() + "» " + this.getSecondary() + AreaMethods.formatTime(Manager.getAreasConfig().getLong("Areas." + area + ".AutoReload.Time")), false);
