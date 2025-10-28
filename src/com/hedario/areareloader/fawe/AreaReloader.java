@@ -53,11 +53,6 @@ public class AreaReloader extends JavaPlugin implements Listener {
 		updater = Manager.getConfig().getBoolean("Settings.Updater.Enabled");
 		announcer = Manager.getConfig().getBoolean("Settings.Announcer.Enabled");
 		
-		new Queue(plugin);
-		
-		// AreaLoader setup
-		AreaLoader.init();
-		
 		// AreaScheduler setup
 		AreaScheduler.init();
 		
@@ -108,7 +103,7 @@ public class AreaReloader extends JavaPlugin implements Listener {
 	}
 
 	public void onDisable() {
-		ShutDown();
+		shutdown();
 		log.info("Succesfully disabled AreaReloader-FAWE!");
 	}
 	
@@ -157,21 +152,14 @@ public class AreaReloader extends JavaPlugin implements Listener {
 	}
 	
 	/**
-	 * Shut down all active tasks.
+	 * Shut down any areas being loaded or scheduled for loading.
 	 */
-	private void ShutDown() {
+	private void shutdown() {
+		for (Loader areas : Loader.getInstances().values()) {
+			areas.remove();
+		}
 		if (!getInstance().getServer().getScheduler().getPendingTasks().isEmpty()) {
 			getInstance().getServer().getScheduler().getPendingTasks().clear();
-		}
-		if (!getInstance().getServer().getScheduler().getActiveWorkers().isEmpty()) {
-			getInstance().getServer().getScheduler().cancelTasks(getInstance());
-			getInstance().getServer().getScheduler().getActiveWorkers().clear();
-		}
-		if (!Queue.get().isEmpty()) {
-			Queue.get().clear();
-		}
-		if (!AreaLoader.areas.isEmpty()) {
-			AreaLoader.areas.clear();
 		}
 	}
 }

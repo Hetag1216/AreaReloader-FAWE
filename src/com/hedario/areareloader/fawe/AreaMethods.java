@@ -164,7 +164,9 @@ public class AreaMethods {
 	 */
 	public static boolean createNewArea(final Player player, final String area, final int length, final boolean copyEntities, final boolean copyBiomes) throws WorldEditException {
 		final Logger logger = AreaReloader.plugin.getLogger();
-		PENDING.add(area);
+		if (!PENDING.contains(area)) {
+			PENDING.add(area);
+		}
 		BukkitPlayer lp = BukkitAdapter.adapt(player);
 		LocalSession ls = WorldEdit.getInstance().getSessionManager().get(lp);
 		Region sel;

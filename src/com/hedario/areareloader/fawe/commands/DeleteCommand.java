@@ -6,7 +6,6 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 
 import com.hedario.areareloader.fawe.AreaMethods;
-import com.hedario.areareloader.fawe.Queue;
 import com.hedario.areareloader.fawe.configuration.Manager;
 
 public class DeleteCommand extends ARCommand {
@@ -24,7 +23,7 @@ public class DeleteCommand extends ARCommand {
 			return;
 		}
 		String area = args.get(0);
-		if (Queue.isQueued(area) && (Queue.getTaskByName(area) == -1)) {
+		if (AreaMethods.getPending().contains(area)) {
 			AreaMethods.sendMessage(sender, LoadCommand.stillCreating().replace("%area%", area), true);
 			return;
 		}
@@ -37,7 +36,6 @@ public class DeleteCommand extends ARCommand {
 			return;
 		}
 		sendMessage(sender, invalidArea().replaceAll("%area%", area), true);
-
 	}
 
 	private String success() {
