@@ -10,13 +10,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.hedario.areareloader.fawe.AreaMethods;
 import com.hedario.areareloader.fawe.AreaReloader;
-import com.hedario.areareloader.fawe.Queue;
 import com.hedario.areareloader.fawe.configuration.Manager;
 import com.sk89q.worldedit.WorldEditException;
 
 public class CreateCommand extends ARCommand {
 	private boolean skipE, skipB, isAsync = false;
 	private int length = 16;
+	private BukkitRunnable task;
 	public CreateCommand() {
 		super("create", "/ar create <name> <copyEntities: true|false> <copyBiomes: true|false> [length] [async]", Manager.getConfig().getString("Commands.Create.Description"), new String[] { "create" });
 	}
@@ -81,12 +81,8 @@ public class CreateCommand extends ARCommand {
 			}
 		}
 		
-		if (skipE) {
-			isAsync = false;
-		}
-		
 		try {
-			BukkitRunnable br = new BukkitRunnable() {
+			task = new BukkitRunnable() {
 				@Override
 				public void run() {
 					sendMessage(sender, preparing().replaceAll("%area%", area), true);
@@ -94,21 +90,17 @@ public class CreateCommand extends ARCommand {
 					if (AreaMethods.createNewArea((Player) sender, args.get(0), length, skipE, skipB)) {
 						sendMessage(sender, success().replaceAll("%area%", area), true);
 						player.getWorld().playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.3F);
-						Queue.get().remove(area);
 					} else {
 						sendMessage(sender, fail().replaceAll("%area%", area), true);
 						player.getWorld().playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 0.5F);
 					}
 				}
 			};
-
-			if (isAsync) {
-				br.runTaskAsynchronously(AreaReloader.getInstance());
+			if (isAsync && skipE) {
+				task.runTaskAsynchronously(AreaReloader.plugin);
 			} else {
-				br.runTask(AreaReloader.getInstance());
+				task.runTask(AreaReloader.plugin);
 			}
-			Queue.get().put(area, -1);
-
 		} catch (WorldEditException e) {
 			Manager.printDebug(this.getName(), e, sender);
 		}

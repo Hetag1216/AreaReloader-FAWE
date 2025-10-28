@@ -8,7 +8,6 @@ import org.bukkit.command.CommandSender;
 
 import com.hedario.areareloader.fawe.AreaMethods;
 import com.hedario.areareloader.fawe.Loader;
-import com.hedario.areareloader.fawe.Queue;
 import com.hedario.areareloader.fawe.configuration.Manager;
 
 public class LoadCommand extends ARCommand {
@@ -26,14 +25,14 @@ public class LoadCommand extends ARCommand {
 			sendMessage(sender, invalidArea().replace("%area%", area), true);
 			return;
 		}
-		if (Queue.isQueued(area)) {
+		/*if (Queue.isQueued(area)) {
 			if (Queue.getTaskByName(area) == -1) {
 				sendMessage(sender, stillCreating().replace("%area%", area), true);
 			} else {
 				sendMessage(sender, alreadyLoading().replace("%area%", area), true);
 			}
 			return;
-		}
+		}*/
 		Location location = new Location(AreaMethods.getWorld(area), AreaMethods.getAreaX(area), AreaMethods.getAreaY(area), AreaMethods.getAreaZ(area));
 		//new AreaLoader(area, AreaMethods.getAreaSizeX(area), AreaMethods.getAreaSizeZ(area), AreaMethods.getAreaChunk(area), location, sender);
 		new Loader(area, location, AreaMethods.getAreaSizeX(area), AreaMethods.getAreaSizeZ(area), sender);

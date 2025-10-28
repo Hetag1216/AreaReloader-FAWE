@@ -21,7 +21,7 @@ public class AreaScheduler {
 	private long delay;
 
 	public AreaScheduler(String area, long delay) {
-		if (Queue.isQueued(area) || areas.contains(this)) {
+		if (Loader.getInstances().containsKey(area) || areas.contains(this)) {
 			updateDelay(area, delay);
 			return;
 		}
@@ -137,7 +137,7 @@ public class AreaScheduler {
 
 	public static void progress() {
 		for (AreaScheduler scheduler : areas) {
-			if (Queue.isQueued(scheduler.getArea())) {
+			if (Loader.getInstances().containsKey(scheduler.getArea())) {
 				scheduler.setLastReset(System.currentTimeMillis());
 				continue;
 			}
@@ -146,11 +146,11 @@ public class AreaScheduler {
 				int x = AreaMethods.getAreaX(scheduler.getArea());
 				int z = AreaMethods.getAreaZ(scheduler.getArea());
 				int y = AreaMethods.getAreaY(scheduler.getArea());
-				int size = AreaMethods.getAreaChunk(scheduler.getArea());
 				int maxX = AreaMethods.getAreaSizeX(scheduler.getArea());
 				int maxZ = AreaMethods.getAreaSizeZ(scheduler.getArea());
 				Location location = new Location(world, x, y, z);
-				new AreaLoader(scheduler.getArea(), maxX, maxZ, size, location, null);
+				new Loader(scheduler.getArea(), location, maxX, maxZ, null);
+				//new AreaLoader(scheduler.getArea(), maxX, maxZ, size, location, null);
 				if (notifyConsoleOnReload) {
 					AreaReloader.log.info("Automatically reloading area: " + scheduler.getArea());
 				}

@@ -7,7 +7,6 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
-import com.hedario.areareloader.fawe.Queue;
 import com.hedario.areareloader.fawe.configuration.Manager;
 
 public class ListCommand extends ARCommand {
@@ -34,13 +33,13 @@ public class ListCommand extends ARCommand {
 			Collections.sort(strings);
 			Collections.reverse(strings);
 			for (String formatted : getPage(strings, 1, true)) {
-				if (Queue.isQueued(formatted)) {
+				/*if (Queue.isQueued(formatted)) {
 					if (Queue.getTaskByName(formatted) == -1) {
 						formatted = formatted + " (Being created)";
 					} else {
 						formatted = formatted + " (Being loaded)";
 					}
-				}
+				}*/
 				sendMessage(sender, "&e " + formatted, false);
 			}
 			return;
@@ -58,9 +57,9 @@ public class ListCommand extends ARCommand {
 					return;
 				}
 				for (String formatted : getPage(strings, Integer.valueOf(arg), true)) {
-					if (Queue.isQueued(formatted)) {
+					/*if (Queue.isQueued(formatted)) {
 						formatted = formatted + " (Being loaded)";
-					}
+					}*/
 					sendMessage(sender, "&e" + formatted, false);
 				}
 			} else {
