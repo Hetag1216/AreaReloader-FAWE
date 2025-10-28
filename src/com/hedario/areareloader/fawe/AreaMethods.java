@@ -1,12 +1,19 @@
 package com.hedario.areareloader.fawe;
 
-import java.io.File;
+import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -37,37 +44,45 @@ import com.sk89q.worldedit.regions.Region;
 import net.md_5.bungee.api.ChatColor;
 
 public class AreaMethods {
-	static AreaReloader plugin;
-	public static boolean fastMode = Manager.getConfig().getBoolean("Settings.AreaLoading.FastMode");
+	public static enum Phase {
+		CREATION,
+		DELETION,
+		LOADING,
+		CANCEL;
+	}
+	private static final List<String> PENDING = new ArrayList<String>();
 	
 	public static void performSetup() {
-		File areas = new File(AreaReloader.plugin.getDataFolder() + File.separator + "Areas");
-		if (!areas.exists()) {
-			try {
-				areas.mkdirs();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		final Path dir = AreaReloader.plugin.getDataFolder().toPath().resolve("Areas");
+		try {
+			Files.createDirectories(dir);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
 	public static void deleteArea(String area) {
-		kill(area);
+		final Logger logger = AreaReloader.plugin.getLogger();
+		kill(Phase.DELETION, area);
+		final Path areasBase = AreaReloader.plugin.getDataFolder().toPath().resolve("Areas");
+		final Path areaDir = areasBase.resolve(area);
+		if (Files.exists(areaDir)) {
+			try {
+				try (Stream<Path> walk = Files.walk(areaDir)) {
+					walk.sorted(Comparator.reverseOrder()).forEach(p -> {
+						try {
+							Files.deleteIfExists(p);
+						} catch (IOException e) {
+							logger.log(Level.WARNING, "Failed to delete " + p + " while cleaning existing area " + area, e);
+						}
+					});
+				}
+			} catch (IOException e) {
+				logger.log(Level.WARNING, "Failed to fully delete existing area directory for " + area, e);
+			}
+		}
 		Manager.getAreasConfig().set("Areas." + area, null);
 		Manager.areas.saveConfig();
-		File dir = new File(AreaReloader.plugin.getDataFolder() + File.separator + "Areas" + File.separator + area);
-		if (dir.exists()) {
-			File[] files = dir.listFiles();
-			if ((files != null) && (files.length != 0)) {
-				File[] arrayOfFile1;
-				int j = (arrayOfFile1 = files).length;
-				for (int i = 0; i < j; i++) {
-					File file = arrayOfFile1[i];
-					file.delete();
-				}
-			}
-			dir.delete();
-		}
 	}
 
 	public static boolean isInteger(String s) {
@@ -124,192 +139,165 @@ public class AreaMethods {
 	}
 
 	public static boolean loadSchematicArea(CommandSender p, String area, String schemFile, World world, Location location) throws WorldEditException, FileNotFoundException, IOException {
-		File file = new File(AreaReloader.plugin.getDataFolder() + File.separator + "Areas" + File.separator + area + File.separator + schemFile + ".schem");
-		Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Building -=-=-=-=-=-=-=-=-=-=-");
-		Manager.printDebug("Area: " + area);
-		if (!file.exists()) {
-			Manager.printDebug("Schematic File: Missing.");
+		final Path path = AreaReloader.plugin.getDataFolder().toPath().resolve("Areas").resolve(area).resolve(schemFile + ".schem");
+		if (!Files.isRegularFile(path)) {
 			return false;
 		}
-		Manager.printDebug("Schematic File: Found.");
-        try {
-            FaweAPI.load(file).paste(FaweAPI.getWorld(world.getName()), BlockVector3.at(location.getBlockX(), location.getBlockY(), location.getBlockZ()));       	
-            Manager.printDebug("Section has been built.");
-        } catch (Exception e) {
-			Manager.printDebug("An error has occurred when building area: " + file.getName());
-			Manager.printDebug(e.getMessage());
-            Manager.printDebug("Printing stack trace to console...");
-        }
-		Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
-		Manager.printDebug("");
+		FaweAPI.load(path.toFile()).paste(FaweAPI.getWorld(world.getName()), BlockVector3.at(location.getBlockX(), location.getBlockY(), location.getBlockZ()));   	
 		return true;
 	}
-	
+
 	/**
-	 * Creates a brand new area
+	 * <p>
+	 * Creates a copy of the selected region using schematics. <br>
+	 * The whole area is split in sub sections to better distribute server load upon
+	 * regeneration.
+	 * </p>
 	 * 
-	 * @param player       The player creating the area
-	 * @param area         The name
-	 * @param length       The length of the area <b>
-	 *                     <p>
-	 *                     The default value is supposed to comprehend the whole
-	 *                     chunk, so the default one should be 16 as specified in
-	 *                     {@link#CreateCommand}. The actual saved values will be
-	 *                     the result of the area's XZ length, which will represent
-	 *                     how wide the area is in chunks.</b>
-	 *                     </p>
-	 * @param copyEntities Whether or not entities should be saved
-	 * @param copyBiomes   Whether or not biomes should be saved
-	 * @return true if the area was created correctly
-	 *         <p>
-	 *         false if the creation was unsuccessful
-	 *         </p>
+	 * @param player
+	 * @param area
+	 * @param length
+	 * @param copyEntities
+	 * @param copyBiomes
+	 * @return whether or not the area was successfully created.
 	 * @throws WorldEditException
 	 */
 	public static boolean createNewArea(final Player player, final String area, final int length, final boolean copyEntities, final boolean copyBiomes) throws WorldEditException {
-		File dir = new File(AreaReloader.plugin.getDataFolder() + File.separator + "Areas" + File.separator + area);
-		if (dir.exists()) {
-			File[] files = dir.listFiles();
-			if ((files != null) && (files.length != 0)) {
-				File[] arrayOfFile1;
-				int j = (arrayOfFile1 = files).length;
-				for (int i = 0; i < j; i++) {
-					File file = arrayOfFile1[i];
-					file.delete();
-				}
-			}
-			dir.delete();
-		}
-
+		final Logger logger = AreaReloader.plugin.getLogger();
+		PENDING.add(area);
 		BukkitPlayer lp = BukkitAdapter.adapt(player);
 		LocalSession ls = WorldEdit.getInstance().getSessionManager().get(lp);
-		Region sel = null;
+		Region sel;
 		try {
 			sel = ls.getSelection(BukkitAdapter.adapt(player.getWorld()));
 		} catch (IncompleteRegionException ex) {
 			sendMessage(player, "&cYou must first select a region!", true);
 			return false;
 		}
-		int maxX = 0;
-		int maxZ = 0;
 		if (!(sel instanceof CuboidRegion)) {
+			sendMessage(player, "&cOnly cuboid selections are supported!", true);
 			return false;
 		}
-		int curX = 0;
+
 		BlockVector3 min = sel.getMinimumPoint();
 		BlockVector3 max = sel.getMaximumPoint();
-		Manager.getAreasConfig().set("Areas." + area + ".World", sel.getWorld().getName());
-		Manager.getAreasConfig().set("Areas." + area + ".HasCopiedEntities", copyEntities);
-		Manager.getAreasConfig().set("Areas." + area + ".HasCopiedBiomes", copyBiomes);
-		Manager.getAreasConfig().set("Areas." + area + ".Minimum.X", min.getBlockX());
-		Manager.getAreasConfig().set("Areas." + area + ".Minimum.Y", min.getBlockY());
-		Manager.getAreasConfig().set("Areas." + area + ".Minimum.Z", min.getBlockZ());
-		Manager.getAreasConfig().set("Areas." + area + ".Maximum.Z", max.getBlockZ());
-		Manager.getAreasConfig().set("Areas." + area + ".Maximum.Y", max.getBlockY());
-		Manager.getAreasConfig().set("Areas." + area + ".Maximum.X", max.getBlockX());
-		Manager.areas.saveConfig();
-		for (int x = min.getBlockX(); x <= max.getBlockX(); x += length) {
-			int curZ = 0;
-			for (int z = min.getBlockZ(); z <= max.getBlockZ(); z += length) {
-				EditSession extent = WorldEdit.getInstance().newEditSessionBuilder()
-						.world(sel.getWorld())
-						.fastMode(fastMode)
+		final int minX = min.getBlockX();
+		final int minY = min.getBlockY();
+		final int minZ = min.getBlockZ();
+		final int maxX = max.getBlockX();
+		final int maxY = max.getBlockY();
+		final int maxZ = max.getBlockZ();
+
+		final int sectionsX = ((maxX - minX) / length) + 1;
+		final int sectionsZ = ((maxZ - minZ) / length) + 1;
+		final boolean fast = Manager.getConfig().getBoolean("Settings.AreaLoading.FastMode");
+		for (int ix = 0; ix < sectionsX; ix++) {
+			final int x = minX + ix * length;
+			for (int iz = 0; iz < sectionsZ; iz++) {
+				final int z = minZ + iz * length;
+
+				try (EditSession extent = WorldEdit.getInstance().newEditSessionBuilder().world(sel.getWorld())
+						.fastMode(fast)
 						.combineStages(true)
 						.changeSetNull()
 						.checkMemory(false)
 						.allowedRegionsEverywhere()
 						.limitUnlimited()
-						.build();
-				Location pt1 = new Location(player.getWorld(), x, min.getBlockY(), z);
-				Location pt2 = new Location(player.getWorld(), x + getMaxInt(x, max.getBlockX(), length), max.getBlockY(), z + getMaxInt(z, max.getBlockZ(), length));
+						.build()) {
 
-				BlockVector3 bvmin = BukkitAdapter.asBlockVector(pt1);
-				BlockVector3 bvmax = BukkitAdapter.asBlockVector(pt2);
-				CuboidRegion region = new CuboidRegion(sel.getWorld(), bvmin, bvmax);
+					Location pt1 = new Location(player.getWorld(), x, minY, z);
+					Location pt2 = new Location(player.getWorld(), x + getMaxInt(x, maxX, length), maxY, z + getMaxInt(z, maxZ, length));
 
-				BlockArrayClipboard cc = new BlockArrayClipboard(region);
-				ForwardExtentCopy clipCopy = new ForwardExtentCopy(extent, region, cc, region.getMinimumPoint());
-				clipCopy.setCopyingEntities(copyEntities);
-				clipCopy.setCopyingBiomes(copyBiomes);
-				Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Creation -=-=-=-=-=-=-=-=-=-=-");
-				Manager.printDebug("Area: " + area);
-				try {
-					Operations.completeLegacy(clipCopy);
-					Manager.printDebug("Succesfully copied the selected clipboard to system.");
-				} catch (Exception e) {
-					e.printStackTrace();
-					Manager.printDebug("An error has occurred when coping the selected clipboard!");
-					Manager.printDebug(e.getMessage());
-				}
-				File file = new File(AreaReloader.plugin.getDataFolder() + File.separator + "Areas" + File.separator + area + File.separator + getFileName(area, curX, curZ) + ".schem");
-				if (file.exists()) {
-					file.delete();
-				}
-				if (!file.getParentFile().exists()) {
-					file.getParentFile().mkdirs();
-					Manager.printDebug("Creating Areas' files directory.");
-				}
-				if (!file.exists()) {
+					BlockVector3 bvmin = BukkitAdapter.asBlockVector(pt1);
+					BlockVector3 bvmax = BukkitAdapter.asBlockVector(pt2);
+					CuboidRegion region = new CuboidRegion(sel.getWorld(), bvmin, bvmax);
+
+					BlockArrayClipboard cc = new BlockArrayClipboard(region);
+					ForwardExtentCopy clipCopy = new ForwardExtentCopy(extent, region, cc, region.getMinimumPoint());
+					clipCopy.setCopyingEntities(copyEntities);
+					clipCopy.setCopyingBiomes(copyBiomes);
+					Manager.printDebug("- PHASE: " + Phase.CREATION.name());
+				    Manager.printDebug("Area: " + area);
+				    Manager.printDebug("Section: " + ix + "_" + iz);
+				    Manager.printDebug("File:" + AreaMethods.getFileName(area, ix, iz));
 					try {
-						file.createNewFile();
-						Manager.printDebug("Saving to file the selected clipboard.");
-					} catch (IOException e) {
-						e.printStackTrace();
-						Manager.printDebug("An error has occurred when saving to clipboard area: " + file.getName());
-						Manager.printDebug(e.getMessage());
+						Operations.completeLegacy(clipCopy);
+					    Manager.printDebug("Successfully copied the selected clipboard to system.");
+					} catch (Exception e) {
+						logger.log(Level.WARNING, "An error occurred while processing the selected clipboard, aborting all operations.", e);
+						Manager.printDebug("An error occurred when copying the selected clipboard: " + e.getMessage());
+						PENDING.remove(area);
+						return false;
 					}
+					final Path path = AreaReloader.plugin.getDataFolder().toPath().resolve("Areas").resolve(area);
+					final Path schem = path.resolve(getFileName(area, ix, iz) + ".schem");
+					try {
+						Files.createDirectories(schem.getParent());
+						Manager.printDebug("Succesfully created area's directory.");
+					} catch (IOException e) {
+						logger.log(Level.WARNING, "Failed to create area's directory, aborting all operations.", e);
+						PENDING.remove(area);
+						return false;
+					}
+					try (OutputStream fos = new BufferedOutputStream(Files.newOutputStream(schem, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
+							ClipboardWriter writer = BuiltInClipboardFormat.FAST.getWriter(fos)) {
+						writer.write(cc);
+						Manager.printDebug("Saved section to file: " + schem);
+					} catch (IOException e) {
+						Manager.printDebug("Failed writing schematic: " + e.getMessage());
+						logger.log(Level.WARNING, "Failed writing schematic file, aborting all operations.", e);
+						PENDING.remove(area);
+						return false;
+					}
+				} catch (Exception e) {
+					logger.log(Level.WARNING, "An unexpected error happened while processing the section " + ix + "_" + iz + " for " + area, e);
+					Manager.printDebug("An unexpected error happened while processing the section." + e.getMessage());
+					PENDING.remove(area);
+					return false;
 				}
-				try (ClipboardWriter writer = BuiltInClipboardFormat.FAST.getWriter(new FileOutputStream(file))) {
-					writer.write(cc);
-					Manager.printDebug("The clipboard was succesfully saved to file.");
-				} catch (FileNotFoundException e) {
-					Manager.printDebug("FileNotFoundException: Something went wrong while writing the schematic file:");
-					Manager.printDebug(e.getMessage());
-					e.printStackTrace();
-				} catch (IOException e) {
-					Manager.printDebug("IOException: Something went wrong while writing the schematic file:");
-					Manager.printDebug(e.getMessage());
-					e.printStackTrace();
-				}
-				Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
-				Manager.printDebug("");
-				curZ++;
-				maxZ = curZ;
 			}
-			curX++;
-			maxX = curX;
 		}
-		maxX--;
-		maxZ--;
-		Manager.getAreasConfig().set("Areas." + area + ".Size.X", maxX);
-		Manager.getAreasConfig().set("Areas." + area + ".Size.Z", maxZ);
-		Manager.getAreasConfig().set("Areas." + area + ".Size.Chunk", (maxX * maxZ > 0 ? maxX * maxZ : 1));
+
+		Manager.getAreasConfig().set("Areas." + area + ".World", sel.getWorld().getName());
+		Manager.getAreasConfig().set("Areas." + area + ".HasCopiedEntities", copyEntities);
+		Manager.getAreasConfig().set("Areas." + area + ".HasCopiedBiomes", copyBiomes);
+		Manager.getAreasConfig().set("Areas." + area + ".Minimum.X", minX);
+		Manager.getAreasConfig().set("Areas." + area + ".Minimum.Y", minY);
+		Manager.getAreasConfig().set("Areas." + area + ".Minimum.Z", minZ);
+		Manager.getAreasConfig().set("Areas." + area + ".Maximum.X", maxX);
+		Manager.getAreasConfig().set("Areas." + area + ".Maximum.Y", maxY);
+		Manager.getAreasConfig().set("Areas." + area + ".Maximum.Z", maxZ);
+		Manager.getAreasConfig().set("Areas." + area + ".Size.X", Math.max(0, sectionsX - 1));
+		Manager.getAreasConfig().set("Areas." + area + ".Size.Z", Math.max(0, sectionsZ - 1));
+		Manager.getAreasConfig().set("Areas." + area + ".Size.Chunk", Math.max(1, sectionsX * sectionsZ));
 		Manager.getAreasConfig().set("Areas." + area + ".Size.Length", length);
 		Manager.getAreasConfig().set("Areas." + area + ".Loading.Interval.Global", true);
 		Manager.getAreasConfig().set("Areas." + area + ".Loading.Interval.Time", 200);
 		Manager.getAreasConfig().set("Areas." + area + ".AutoReload.Enabled", false);
 		Manager.getAreasConfig().set("Areas." + area + ".AutoReload.Time", 200000);
 		Manager.areas.saveConfig();
+		PENDING.remove(area);
 		return true;
 	}
 	
-	public static void kill(String area) {
-		Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- Area Killing -=-=-=-=-=-=-=-=-=-=-");
-		Manager.printDebug("Area: " + area);
-		if (Queue.isQueued(area)) {
-			AreaLoader.reset(area);
-			Queue.remove(area, Queue.getTaskByName(area));
-			Manager.printDebug("Killed area's execution.");
-		}
+	public static void kill(final Phase phase, String area) {
 		if (DisplayCommand.isDisplaying(area)) {
 			DisplayCommand.remove(area, null);
 		}
-		Manager.printDebug("Removed from the loading instances.");
-		Manager.printDebug("Removed from the automatic loading instances.");
-		Manager.printDebug("-=-=-=-=-=-=-=-=-=-=- -=- -=-=-=-=-=-=-=-=-=-=-");
-		Manager.printDebug("");
+		
+		final Loader loader = Loader.get(area);
+		Manager.printDebug("- PHASE: " + phase.name());
+		Manager.printDebug("Area: " + area);
+		if (loader == null) {
+			Manager.printDebug("The area is not being loaded?");
+			return;
+		} else {
+			Manager.printDebug("Task ID:" + loader.task.getTaskId());
+			loader.remove();
+			Manager.printDebug("Executed succesfully");
+		}
 	}
-	
+
 	public static List<String> getAreas() {
 		List<String> areas = new ArrayList<String>();
 		if (Manager.getAreasConfig().contains("Areas")) {
@@ -336,9 +324,13 @@ public class AreaMethods {
 	}
 	
 	public static long getInterval(String area) {
-		if (!isGlobalInterval(area))
-			return Manager.getAreasConfig().getLong("Areas." + area + ".Loading.Interval.Time");
-		return getGlobalInterval();
+		long interval;
+		if (!isGlobalInterval(area)) {
+			interval = Manager.getAreasConfig().getLong("Areas." + area + ".Loading.Interval.Time");
+		} else {
+			interval = getGlobalInterval();
+		}
+		return interval < 1 ? 1 : interval;
 	}
 	
 	public static String getAreaInWorld(String area) {
@@ -398,11 +390,11 @@ public class AreaMethods {
 	}
 	
 	public static ChatColor getPrimaryColor() {
-		return ChatColor.GOLD;
+		return ChatColor.of(Manager.getConfig().getString("Settings.Language.Colors.Primary"));
 	}
 	
 	public static ChatColor getSecondaryColor() {
-		return ChatColor.YELLOW;
+		return ChatColor.of(Manager.getConfig().getString("Settings.Language.Colors.Secondary"));
 	}
 	
 	public static void sendMessage(CommandSender sender, String message, boolean prefix) {
@@ -418,5 +410,9 @@ public class AreaMethods {
 	
 	public static String getPrefix() {
 		return Manager.getConfig().getString("Settings.Language.ChatPrefix");
+	}
+
+	public static List<String> getPending() {
+		return PENDING;
 	}
 }
