@@ -291,7 +291,7 @@ public class AreaMethods {
 		Manager.printDebug("- PHASE: " + phase.name());
 		Manager.printDebug("Area: " + area);
 		if (loader == null) {
-			Manager.printDebug("The area is not being loaded?");
+			Manager.printDebug("Couldn't kill, area wasn't loading.");
 			return;
 		} else {
 			Manager.printDebug("Task ID:" + loader.task.getTaskId());
