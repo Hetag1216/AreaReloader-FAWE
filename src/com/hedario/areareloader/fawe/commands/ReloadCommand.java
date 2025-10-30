@@ -27,11 +27,6 @@ public class ReloadCommand extends ARCommand {
 			Manager.reloadConfigurations();
 			AreaScheduler.init();
 			new Executor(AreaReloader.getInstance());
-			if (AreaReloader.checker) {
-				if (AreaScheduler.getAreas() != null) {
-					AreaScheduler.updateDelay(AreaScheduler.getAreas(), AreaScheduler.getAreasResetTime());
-				}
-			}
 			sendMessage(sender, success(), true);
 		} catch (Exception e) {
 			sendMessage(sender, fail(), true);
