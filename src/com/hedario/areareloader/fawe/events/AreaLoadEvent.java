@@ -11,7 +11,13 @@ public class AreaLoadEvent extends Event implements Cancellable {
 	private final CommandSender sender;
 	private boolean cancelled = false;
 
+	/**
+	 * Primarly used by {@link AreaScheduler} when calling a new {@link Loader}.<br>
+	 * This runs <b>async</b> for the scheduler's checker.
+	 * @param area
+	 */
 	public AreaLoadEvent(final String area) {
+		super(true);
 		this.area = area;
 		this.sender = null;
 	}
