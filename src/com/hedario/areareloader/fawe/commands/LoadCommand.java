@@ -25,16 +25,13 @@ public class LoadCommand extends ARCommand {
 			sendMessage(sender, invalidArea().replace("%area%", area), true);
 			return;
 		}
-		/*if (Queue.isQueued(area)) {
-			if (Queue.getTaskByName(area) == -1) {
-				sendMessage(sender, stillCreating().replace("%area%", area), true);
-			} else {
-				sendMessage(sender, alreadyLoading().replace("%area%", area), true);
-			}
-			return;
-		}*/
+		if (AreaMethods.getPending().contains(area)) {
+			sendMessage(sender, stillCreating().replace("%area%", area), true);
+		}
+		if (Loader.getInstances().containsKey(area)) {
+			sendMessage(sender, alreadyLoading().replace("%area%", area), true);
+		}
 		Location location = new Location(AreaMethods.getWorld(area), AreaMethods.getAreaX(area), AreaMethods.getAreaY(area), AreaMethods.getAreaZ(area));
-		//new AreaLoader(area, AreaMethods.getAreaSizeX(area), AreaMethods.getAreaSizeZ(area), AreaMethods.getAreaChunk(area), location, sender);
 		new Loader(area, location, AreaMethods.getAreaSizeX(area), AreaMethods.getAreaSizeZ(area), sender);
 		sendMessage(sender, prepare().replace("%area%", area), true);
 	}
