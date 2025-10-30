@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.hedario.areareloader.fawe.configuration.Manager;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class AreaScheduler {
 	public static List<AreaScheduler> areas = new ArrayList<>();
@@ -21,7 +21,7 @@ public class AreaScheduler {
 	private long delay;
 
 	public AreaScheduler(String area, long delay) {
-		if (Loader.getInstances().containsKey(area) || areas.contains(this)) {
+		if (Loader.getInstances().containsKey(area) && areas.contains(this)) {
 			updateDelay(area, delay);
 			return;
 		}
@@ -32,23 +32,22 @@ public class AreaScheduler {
 	}
 	
 	public static void init() {
-		if (areas != null && !areas.isEmpty()) {
+		checker = Manager.getConfig().getBoolean("Settings.AutoReload.Checker");
+		if (!checker) {
+			AreaReloader.log.info("Checker for areas to auto reload is disabled!");
+			return;
+		}
+		if (!areas.isEmpty()) {
 			areas.clear();
 		}
-		checker = Manager.getConfig().getBoolean("Settings.AutoReload.Checker");
 		notifyOnReload = Manager.getConfig().getBoolean("Settings.AutoReload.Notify.Admins");
 		notifyConsoleOnReload = Manager.getConfig().getBoolean("Settings.AutoReload.Notify.Console");
-		
-		if (checker) {
-			AreaReloader.log.info("Checker for areas to auto reload is enabled!");
-			checkForAreas();
-			manageTimings();
-			AreaReloader.log.info("Found " + areas.size() + " areas to automatically reload!");
-		} else {
-			AreaReloader.log.info("Checker for areas to auto reload is disabled!");
-		}
+		AreaReloader.log.info("Checker for areas to auto reload is enabled!");
+		checkForAreas();
+		manageTimings();
+		AreaReloader.log.info("Found " + areas.size() + " areas to automatically reload!");
 	}
-	
+
 	public static void checkForAreas() {
 		if (Manager.getAreasConfig().contains("Areas")) {
 			for (String keys : Manager.getAreasConfig().getConfigurationSection("Areas").getKeys(false)) {
@@ -137,11 +136,11 @@ public class AreaScheduler {
 
 	public static void progress() {
 		for (AreaScheduler scheduler : areas) {
-			if (Loader.getInstances().containsKey(scheduler.getArea())) {
-				scheduler.setLastReset(System.currentTimeMillis());
-				continue;
-			}
 			if (System.currentTimeMillis() >= scheduler.getDelay() + scheduler.getLastReset()) {
+				if (Loader.getInstances().containsKey(scheduler.getArea())) {
+					scheduler.setLastReset(System.currentTimeMillis());
+					continue;
+				}
 				World world = Bukkit.getServer().getWorld(Manager.getAreasConfig().getString("Areas." + scheduler.getArea() + ".World"));
 				int x = AreaMethods.getAreaX(scheduler.getArea());
 				int z = AreaMethods.getAreaZ(scheduler.getArea());
@@ -150,15 +149,13 @@ public class AreaScheduler {
 				int maxZ = AreaMethods.getAreaSizeZ(scheduler.getArea());
 				Location location = new Location(world, x, y, z);
 				new Loader(scheduler.getArea(), location, maxX, maxZ, null);
-				//new AreaLoader(scheduler.getArea(), maxX, maxZ, size, location, null);
 				if (notifyConsoleOnReload) {
 					AreaReloader.log.info("Automatically reloading area: " + scheduler.getArea());
 				}
 				if (notifyOnReload) {
 					for (Player ops : Bukkit.getServer().getOnlinePlayers()) {
 						if (ops.isOp() || ops.hasPermission("areareloader.command.admin")) {
-							ops.sendMessage(ChatColor.translateAlternateColorCodes('&', AreaMethods.getPrefix() + "Automatically reloading area: &e" + scheduler.getArea() + "&6."));
-							ops.getWorld().playSound(ops.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1F, 0.3F);
+							ops.sendMessage(ChatColor.translateAlternateColorCodes('&', AreaMethods.getPrefix()) + AreaMethods.getPrimaryColor() + "Automatically reloading " + AreaMethods.getSecondaryColor() + scheduler.getArea() + AreaMethods.getPrimaryColor() + ".");
 						}
 					}
 				}
@@ -168,9 +165,8 @@ public class AreaScheduler {
 	}
 
 	public static void manageTimings() {
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(AreaReloader.getInstance(), () -> {
+		Bukkit.getScheduler().runTaskTimerAsynchronously(AreaReloader.plugin, () -> {
 			progress();
-		}, 200, 100);
+		}, 600, 200);
 	}
-
 }
