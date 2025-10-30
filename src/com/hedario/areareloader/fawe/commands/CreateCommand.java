@@ -16,7 +16,6 @@ import com.sk89q.worldedit.WorldEditException;
 public class CreateCommand extends ARCommand {
 	private boolean skipE, skipB, isAsync = false;
 	private int length = 16;
-	private BukkitRunnable task;
 	public CreateCommand() {
 		super("create", "/ar create <name> <copyEntities: true|false> <copyBiomes: true|false> [length] [async]", Manager.getConfig().getString("Commands.Create.Description"), new String[] { "create" });
 	}
@@ -82,7 +81,7 @@ public class CreateCommand extends ARCommand {
 		}
 		
 		try {
-			task = new BukkitRunnable() {
+			final BukkitRunnable task = new BukkitRunnable() {
 				@Override
 				public void run() {
 					sendMessage(sender, preparing().replaceAll("%area%", area), true);
