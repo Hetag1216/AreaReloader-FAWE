@@ -12,17 +12,11 @@ import org.bukkit.inventory.ItemStack;
 
 import com.hedario.areareloader.fawe.configuration.Manager;
 
-
 public enum ParticleEffect {
 	/**
 	 * Applicable data: {@link BlockData}
 	 */
-	BLOCK_CRACK(Particle.BLOCK_CRACK),
-	
-	/**
-	 * Applicable data: {@link BlockData}
-	 */
-	BLOCK_DUST(Particle.BLOCK_DUST),
+	BLOCK(Particle.BLOCK),
 	
 	/**
 	 * Applicable data: {@link BlockData}
@@ -37,7 +31,7 @@ public enum ParticleEffect {
 	/**
 	 * Applicable data: {@link DustOptions}
 	 */
-	REDSTONE(Particle.REDSTONE),
+	DUST(Particle.DUST),
 	
 	/**
 	 * Applicable data: {@link Vibration}
@@ -52,7 +46,7 @@ public enum ParticleEffect {
 	/**
 	 * Applicable data: {@link ItemStack}
 	 */
-	ITEM_CRACK(Particle.ITEM_CRACK),
+	ITEM(Particle.ITEM),
 
 	ASH(Particle.ASH), WHITE_ASH(Particle.WHITE_ASH),
 
@@ -69,7 +63,7 @@ public enum ParticleEffect {
 	CRIMSON_SPORE(Particle.CRIMSON_SPORE),
 	
 	CRIT(Particle.CRIT),
-	CRIT_MAGIC(Particle.CRIT_MAGIC),
+	ENCHANTED_HIT(Particle.ENCHANTED_HIT),
 	
 	CURRENT_DOWN(Particle.CURRENT_DOWN),
 	
@@ -79,8 +73,8 @@ public enum ParticleEffect {
 	
 	DRAGON_BREATH(Particle.DRAGON_BREATH),
 	
-	DRIP_LAVA(Particle.DRIP_LAVA),
-	DRIP_WATER(Particle.DRIP_WATER),
+	DRIPPING_LAVA(Particle.DRIPPING_LAVA),
+	DRIPPING_WATER(Particle.DRIPPING_WATER),
 	
 	DRIPPING_DRIPSTONE_LAVA(Particle.DRIPPING_DRIPSTONE_LAVA),
 	DRIPPING_DRIPSTONE_WATER(Particle.DRIPPING_DRIPSTONE_WATER),
@@ -90,13 +84,12 @@ public enum ParticleEffect {
 	
 	ELECTRIC_SPARK(Particle.ELECTRIC_SPARK),
 	
-	ENCHANTMENT_TABLE(Particle.ENCHANTMENT_TABLE),
+	ENCHANT(Particle.ENCHANT),
 	
 	END_ROD(Particle.END_ROD),
 
-	EXPLOSION_HUGE(Particle.EXPLOSION_HUGE),
-	EXPLOSION_LARGE(Particle.EXPLOSION_LARGE),
-	EXPLOSION_NORMAL(Particle.EXPLOSION_NORMAL),
+	EXPLOSION(Particle.EXPLOSION),
+	EXPLOSION_EMITTER(Particle.EXPLOSION_EMITTER),
 
 	FALLING_DRIPSTONE_LAVA(Particle.FALLING_DRIPSTONE_LAVA),
 	FALLING_DRIPSTONE_WATER(Particle.FALLING_DRIPSTONE_WATER),
@@ -108,7 +101,7 @@ public enum ParticleEffect {
 	FALLING_SPORE_BLOSSOM(Particle.FALLING_SPORE_BLOSSOM),
 	FALLING_WATER(Particle.FALLING_WATER),
 
-	FIREWORKS_SPARK(Particle.FIREWORKS_SPARK),
+	FIREWORK(Particle.FIREWORK),
 
 	FLASH(Particle.FLASH),
 
@@ -124,7 +117,7 @@ public enum ParticleEffect {
 
 	LANDING_OBSIDIAN_TEAR(Particle.LANDING_OBSIDIAN_TEAR),
 
-	LAVA(Particle.LAVA), MOB_APPEARANCE(Particle.MOB_APPEARANCE),
+	LAVA(Particle.LAVA), ELDER_GUARDIAN(Particle.ELDER_GUARDIAN),
 
 	NAUTILUS(Particle.NAUTILUS),
 
@@ -136,29 +129,26 @@ public enum ParticleEffect {
 
 	SCRAPE(Particle.SCRAPE),
 
-	SLIME(Particle.SLIME),
+	SLIME(Particle.ITEM_SLIME),
 
 	FLAME_SMALL(Particle.SMALL_FLAME),
 	FLAME(Particle.FLAME),
 	FLAME_SOUL_FIRE(Particle.SOUL_FIRE_FLAME),
 
-	SMOKE_LARGE(Particle.SMOKE_LARGE),
-	SMOKE_NORMAL(Particle.SMOKE_NORMAL),
+	SMOKE(Particle.SMOKE),
+	LARGE_SMOKE(Particle.LARGE_SMOKE),
 	
 	SNEEZE(Particle.SNEEZE),
 
-	SNOW_SHOVEL(Particle.SNOW_SHOVEL),
-	SNOWBALL(Particle.SNOWBALL),
+	POOF(Particle.POOF),
 	SNOWFLAKE(Particle.SNOWFLAKE),
 
 	SOUL(Particle.SOUL),
 
-
-	SPELL(Particle.SPELL),
-	SPELL_INSTANT(Particle.SPELL_INSTANT),
-	SPELL_MOB(Particle.SPELL_MOB),
-	SPELL_MOB_AMBIENT(Particle.SPELL_MOB_AMBIENT),
-	SPELL_WITCH(Particle.SPELL_WITCH),
+	EFFECT(Particle.EFFECT),
+	INSTANT_EFFECT(Particle.INSTANT_EFFECT),
+    ENTITY_EFFECT(Particle.ENTITY_EFFECT),
+    WITCH(Particle.WITCH),
 
 	SPIT(Particle.SPIT),
 
@@ -166,27 +156,58 @@ public enum ParticleEffect {
 
 	SQUID_INK(Particle.SQUID_INK),
 
-	SUSPENDED(Particle.SUSPENDED),
-	SUSPENDED_DEPTH(Particle.SUSPENDED_DEPTH),
-
 	SWEEP_ATTACK(Particle.SWEEP_ATTACK),
 
-	TOTEM(Particle.TOTEM),
+	TOTEM_OF_UNDYING(Particle.TOTEM_OF_UNDYING),
 
-	TOWN_AURA(Particle.TOWN_AURA),
+	MYCELIUM(Particle.MYCELIUM),
 
-	VILLAGER_ANGRY(Particle.VILLAGER_ANGRY),
-	VILLAGER_HAPPY(Particle.VILLAGER_HAPPY),
+	VILLAGER_ANGRY(Particle.ANGRY_VILLAGER),
+	VILLAGER_HAPPY(Particle.HAPPY_VILLAGER),
 	
 	WARPED_SPORE(Particle.WARPED_SPORE),
 	
-	WATER_BUBBLE(Particle.WATER_BUBBLE),
-	WATER_DROP(Particle.WATER_DROP),
-	WATER_SPLASH(Particle.WATER_SPLASH),
-	WATER_WAKE(Particle.WATER_WAKE),
+	BUBBLE(Particle.BUBBLE),
+	SPLASH(Particle.SPLASH),
+	UNDERWATER(Particle.UNDERWATER),
 	
 	WAX_OFF(Particle.WAX_OFF),
-	WAX_ON(Particle.WAX_ON);
+	WAX_ON(Particle.WAX_ON),
+	
+    GUST(Particle.GUST),
+    SMALL_GUST(Particle.SMALL_GUST),
+    GUST_EMITTER_LARGE(Particle.GUST_EMITTER_LARGE),
+    GUST_EMITTER_SMALL(Particle.GUST_EMITTER_SMALL),
+
+    // Trial spawner & ominous vault
+    TRIAL_SPAWNER_DETECTION(Particle.TRIAL_SPAWNER_DETECTION),
+    TRIAL_SPAWNER_DETECTION_OMINOUS(Particle.TRIAL_SPAWNER_DETECTION_OMINOUS),
+    TRIAL_OMEN(Particle.TRIAL_OMEN),
+    OMINOUS_SPAWNING(Particle.OMINOUS_SPAWNING),
+    RAID_OMEN(Particle.RAID_OMEN),
+    VAULT_CONNECTION(Particle.VAULT_CONNECTION),
+
+    // Ambient foliage / firefly
+    FIREFLY(Particle.FIREFLY),
+    CHERRY_LEAVES(Particle.CHERRY_LEAVES),
+    PALE_OAK_LEAVES(Particle.PALE_OAK_LEAVES),
+    TINTED_LEAVES(Particle.TINTED_LEAVES),
+
+    // Misc new particles
+    BLOCK_CRUMBLE(Particle.BLOCK_CRUMBLE),
+    DUST_PILLAR(Particle.DUST_PILLAR),
+    DUST_PLUME(Particle.DUST_PLUME),
+    WHITE_SMOKE(Particle.WHITE_SMOKE),
+    RAIN(Particle.RAIN),
+    SCULK_CHARGE(Particle.SCULK_CHARGE),
+    SCULK_CHARGE_POP(Particle.SCULK_CHARGE_POP),
+    SCULK_SOUL(Particle.SCULK_SOUL),
+    SHRIEK(Particle.SHRIEK),
+    SONIC_BOOM(Particle.SONIC_BOOM),
+    ITEM_SNOWBALL(Particle.ITEM_SNOWBALL),
+    ITEM_COBWEB(Particle.ITEM_COBWEB),
+    INFESTED(Particle.INFESTED),
+    TRAIL(Particle.TRAIL);
 	
 	
 	Particle particle;

@@ -40,7 +40,9 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
+
 import javax.net.ssl.HttpsURLConnection;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -60,7 +62,8 @@ public class Metrics {
    * @param serviceId The id of the service. It can be found at <a
    *     href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
    */
-  public Metrics(JavaPlugin plugin, int serviceId) {
+  @SuppressWarnings("deprecation")
+public Metrics(JavaPlugin plugin, int serviceId) {
     this.plugin = plugin;
     // Get the config file
     File bStatsFolder = new File(plugin.getDataFolder().getParentFile(), "bStats");

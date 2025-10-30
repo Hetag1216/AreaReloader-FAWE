@@ -63,6 +63,9 @@ public class AreaMethods {
 
 	public static void deleteArea(String area) {
 		final Logger logger = AreaReloader.plugin.getLogger();
+		if (AreaScheduler.get(area) != null) {
+			AreaScheduler.INSTANCES.remove(area);
+		}
 		kill(Phase.DELETION, area);
 		final Path areasBase = AreaReloader.plugin.getDataFolder().toPath().resolve("Areas");
 		final Path areaDir = areasBase.resolve(area);
@@ -162,7 +165,7 @@ public class AreaMethods {
 	 * @return whether or not the area was successfully created.
 	 * @throws WorldEditException
 	 */
-	public static boolean createNewArea(final Player player, final String area, final int length, final boolean copyEntities, final boolean copyBiomes) throws WorldEditException {
+	public static boolean createNewArea(final Player player, final String area, int length, final boolean copyEntities, final boolean copyBiomes) throws WorldEditException {
 		final Logger logger = AreaReloader.plugin.getLogger();
 		if (!PENDING.contains(area)) {
 			PENDING.add(area);
@@ -189,6 +192,7 @@ public class AreaMethods {
 		final int maxX = max.getBlockX();
 		final int maxY = max.getBlockY();
 		final int maxZ = max.getBlockZ();
+		length = length > 0 ? length : 16;
 
 		final int sectionsX = ((maxX - minX) / length) + 1;
 		final int sectionsZ = ((maxZ - minZ) / length) + 1;
@@ -311,7 +315,7 @@ public class AreaMethods {
 	}
 	
 	public static boolean exists(final String area) {
-		if (Manager.getAreasConfig().contains("Areas." + area)) {
+		if (Manager.getAreasConfig().contains("Areas." + area) && !PENDING.contains(area)) {
 			return true;
 		}
 		return false;

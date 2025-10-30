@@ -5,6 +5,9 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import com.hedario.areareloader.fawe.AreaScheduler;
+import com.hedario.areareloader.fawe.Loader;
+
 public class AreaLoadEvent extends Event implements Cancellable {
 	public static final HandlerList handlers = new HandlerList();
 	private final String area;

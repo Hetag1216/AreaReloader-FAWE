@@ -27,9 +27,11 @@ public class LoadCommand extends ARCommand {
 		}
 		if (AreaMethods.getPending().contains(area)) {
 			sendMessage(sender, stillCreating().replace("%area%", area), true);
+			return;
 		}
 		if (Loader.getInstances().containsKey(area)) {
 			sendMessage(sender, alreadyLoading().replace("%area%", area), true);
+			return;
 		}
 		Location location = new Location(AreaMethods.getWorld(area), AreaMethods.getAreaX(area), AreaMethods.getAreaY(area), AreaMethods.getAreaZ(area));
 		new Loader(area, location, AreaMethods.getAreaSizeX(area), AreaMethods.getAreaSizeZ(area), sender);

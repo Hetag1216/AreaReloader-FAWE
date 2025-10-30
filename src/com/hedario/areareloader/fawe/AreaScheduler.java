@@ -1,7 +1,7 @@
 package com.hedario.areareloader.fawe;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,7 +13,7 @@ import com.hedario.areareloader.fawe.configuration.Manager;
 import net.md_5.bungee.api.ChatColor;
 
 public class AreaScheduler {
-	public static List<AreaScheduler> areas = new ArrayList<>();
+	public static final Map<String, AreaScheduler> INSTANCES = new ConcurrentHashMap<String, AreaScheduler>();
 
 	public String area;
 	public static boolean notifyOnReload, notifyConsoleOnReload, checker;
@@ -21,14 +21,14 @@ public class AreaScheduler {
 	private long delay;
 
 	public AreaScheduler(String area, long delay) {
-		if (Loader.getInstances().containsKey(area) && areas.contains(this)) {
+		if (Loader.getInstances().containsKey(area) && INSTANCES.containsKey(area)) {
 			updateDelay(area, delay);
 			return;
 		}
 		this.area = area;
 		this.delay = delay;
 		this.reset = System.currentTimeMillis();
-		areas.add(this);
+		INSTANCES.put(area, this);
 	}
 	
 	public static void init() {
@@ -37,15 +37,15 @@ public class AreaScheduler {
 			AreaReloader.log.info("Checker for areas to auto reload is disabled!");
 			return;
 		}
-		if (!areas.isEmpty()) {
-			areas.clear();
+		if (!INSTANCES.isEmpty()) {
+			INSTANCES.clear();
 		}
 		notifyOnReload = Manager.getConfig().getBoolean("Settings.AutoReload.Notify.Admins");
 		notifyConsoleOnReload = Manager.getConfig().getBoolean("Settings.AutoReload.Notify.Console");
 		AreaReloader.log.info("Checker for areas to auto reload is enabled!");
 		checkForAreas();
 		manageTimings();
-		AreaReloader.log.info("Found " + areas.size() + " areas to automatically reload!");
+		AreaReloader.log.info("Found " + INSTANCES.size() + " areas to automatically reload!");
 	}
 
 	public static void checkForAreas() {
@@ -60,7 +60,7 @@ public class AreaScheduler {
 	}
 
 	public static void updateDelay(String area, long delay) {
-		for (AreaScheduler s : areas) {
+		for (AreaScheduler s : INSTANCES.values()) {
 			if (s.getArea().equalsIgnoreCase(area)) {
 				s.setDelay(delay);
 				s.setLastReset(System.currentTimeMillis());
@@ -70,7 +70,7 @@ public class AreaScheduler {
 		new AreaScheduler(area, delay);
 	}
 	public static long getRemainingTime(String area) {
-		for (AreaScheduler scheduler : areas) {
+		for (AreaScheduler scheduler : INSTANCES.values()) {
 			if (scheduler.getArea().equalsIgnoreCase(area)) {
 				return scheduler.getLastReset() + scheduler.getDelay() - System.currentTimeMillis();
 			}
@@ -101,13 +101,8 @@ public class AreaScheduler {
 		return 0;
 	}
 	
-	public static boolean isInstance(String area) {
-		for (AreaScheduler as : areas) {
-			if (as.area == area) {
-				return true;
-			}
-		}
-		return false;
+	public static AreaScheduler get(final String area) {
+		return INSTANCES.get(area);
 	}
 	
 	public String getArea() {
@@ -135,7 +130,7 @@ public class AreaScheduler {
 	}
 
 	public static void progress() {
-		for (AreaScheduler scheduler : areas) {
+		for (AreaScheduler scheduler : INSTANCES.values()) {
 			if (System.currentTimeMillis() >= scheduler.getDelay() + scheduler.getLastReset()) {
 				if (Loader.getInstances().containsKey(scheduler.getArea())) {
 					scheduler.setLastReset(System.currentTimeMillis());

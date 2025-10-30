@@ -69,12 +69,12 @@ public class DisplayCommand extends ARCommand {
 				for (Location finalLoc : getHollowCube(corner1, corner2, 0.25)) {
 					if (useParticles()) {
 						ParticleEffect effect = null;
-						if (ef.equalsIgnoreCase("BLOCK_CRACK")) {
-							effect = ParticleEffect.BLOCK_CRACK;
+						if (ef.equalsIgnoreCase("BLOCK")) {
+							effect = ParticleEffect.BLOCK;
 							effect.display(finalLoc, 1, 0.03F, 0.03F, 0.03F, 0.03F, Material.valueOf(match()).createBlockData());
 							effect.display(finalLoc, 1, 0, 0, 0, 0, Material.valueOf(match()).createBlockData());
-						} else if (ef.equalsIgnoreCase("BLOCK_DUST")) {
-							effect = ParticleEffect.BLOCK_DUST;
+						} else if (ef.equalsIgnoreCase("FALLING_DUST")) {
+							effect = ParticleEffect.FALLING_DUST;
 							effect.display(finalLoc, 1, 0.03F, 0.03F, 0.03F, 0.03F, Material.valueOf(match()).createBlockData());
 							effect.display(finalLoc, 1, 0, 0, 0, 0, Material.valueOf(match()).createBlockData());
 						} else {

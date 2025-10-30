@@ -56,7 +56,6 @@ public class AreaReloader extends JavaPlugin implements Listener {
 		// AreaScheduler setup
 		AreaScheduler.init();
 		
-		
 		// Instantiate events
 		getServer().getPluginManager().registerEvents(new AreaListener(this), this);
 		new AreaListener(this);

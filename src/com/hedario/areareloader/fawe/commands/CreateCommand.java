@@ -3,6 +3,7 @@ package com.hedario.areareloader.fawe.commands;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,7 +15,7 @@ import com.hedario.areareloader.fawe.configuration.Manager;
 import com.sk89q.worldedit.WorldEditException;
 
 public class CreateCommand extends ARCommand {
-	private boolean skipE, skipB, isAsync = false;
+	private boolean copyE, copyB, isAsync = false;
 	private int length = 16;
 	public CreateCommand() {
 		super("create", "/ar create <name> <copyEntities: true|false> <copyBiomes: true|false> [length] [async]", Manager.getConfig().getString("Commands.Create.Description"), new String[] { "create" });
@@ -37,9 +38,9 @@ public class CreateCommand extends ARCommand {
 		
 		final String skipEnts = args.get(1);
 		if (skipEnts.contains("true")) {
-			skipE = true;
+			copyE = true;
 		} else if (skipEnts.contains("false")) {
-			skipE = false;
+			copyE = false;
 		} else {
 			sendMessage(sender, invalidValue(), true);
 			return;
@@ -47,9 +48,9 @@ public class CreateCommand extends ARCommand {
 		
 		final String biomes = args.get(2);
 		if (biomes.contains("true")) {
-			skipB = true;
+			copyB = true;
 		} else if (biomes.contains("false")) {
-			skipB = false;
+			copyB = false;
 		} else {
 			sendMessage(sender, invalidValue(), true);
 			return;
@@ -79,23 +80,29 @@ public class CreateCommand extends ARCommand {
 				}
 			}
 		}
-		
+		if (copyE) {
+			isAsync = false;
+		}
 		try {
 			final BukkitRunnable task = new BukkitRunnable() {
 				@Override
 				public void run() {
 					sendMessage(sender, preparing().replaceAll("%area%", area), true);
 					Player player = (Player) sender;
-					if (AreaMethods.createNewArea((Player) sender, args.get(0), length, skipE, skipB)) {
+					if (AreaMethods.createNewArea((Player) sender, area, length, copyE, copyB)) {
 						sendMessage(sender, success().replaceAll("%area%", area), true);
-						player.getWorld().playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.3F);
+						Bukkit.getScheduler().runTask(AreaReloader.plugin, () -> {
+							player.getWorld().playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.3F);
+						});
 					} else {
 						sendMessage(sender, fail().replaceAll("%area%", area), true);
-						player.getWorld().playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 0.5F);
+						Bukkit.getScheduler().runTask(AreaReloader.plugin, () -> {
+							player.getWorld().playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 0.5F);
+						});
 					}
 				}
 			};
-			if (isAsync && skipE) {
+			if (isAsync) {
 				task.runTaskAsynchronously(AreaReloader.plugin);
 			} else {
 				task.runTask(AreaReloader.plugin);

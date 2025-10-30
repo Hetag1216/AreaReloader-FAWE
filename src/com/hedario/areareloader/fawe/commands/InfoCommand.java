@@ -72,7 +72,7 @@ public class InfoCommand extends ARCommand {
 			sendMessage(sender, this.getPrimary() + "Currently loaded percentage " + this.getNeutral() + "» " + this.getSecondary() + Loader.get(area).perc + "%", false);
 		}
 		sendMessage(sender, this.getPrimary() + "Is automatically reloading " + this.getNeutral() + "» " + this.getSecondary() + Manager.getAreasConfig().getBoolean("Areas." + area + ".AutoReload.Enabled"), false);
-		if (Manager.getAreasConfig().getBoolean("Areas." + area + ".AutoReload.Enabled") == true) {
+		if (AreaScheduler.INSTANCES.containsKey(area)) {
 			sendMessage(sender, this.getPrimary() + "Auto reloading time " + this.getNeutral() + "» " + this.getSecondary() + AreaMethods.formatTime(Manager.getAreasConfig().getLong("Areas." + area + ".AutoReload.Time")), false);
 			sendMessage(sender, this.getPrimary() + "Next auto reload in " + this.getNeutral() + "» " + this.getSecondary() + AreaMethods.formatTime(AreaScheduler.getRemainingTime(area)), false);
 		}

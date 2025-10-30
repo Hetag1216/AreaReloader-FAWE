@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Consumer;
 
 // From: https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates
 public class UpdateChecker {
@@ -20,7 +20,7 @@ public class UpdateChecker {
         this.resourceId = resourceId;
     }
 
-    public void getVersion(final Consumer<String> consumer) {
+	public void getVersion(final Consumer<String> consumer) {
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId).openStream(); Scanner scanner = new Scanner(inputStream)) {
                 if (scanner.hasNext()) {
