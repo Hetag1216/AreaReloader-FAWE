@@ -43,7 +43,6 @@ public class CancelCommand extends ARCommand {
 						AreaScheduler.updateDelay(AreaScheduler.getAreas(), AreaScheduler.getAreasResetTime());
 					}
 				}
-
 				this.sendMessage(sender, cancelAll(), true);
 				return;
 			} else {
@@ -83,9 +82,11 @@ public class CancelCommand extends ARCommand {
 		if (!sender.hasPermission("areareloader.command.cancel") || args.size() >= 1) {
 			return new ArrayList<String>();
 		}
-		list.add("all");
-		for (final String map : AreaMethods.getAreas()) {
-			list.add(map);
+		for (final String loading : Loader.getInstances().keySet()) {
+			list.add(loading);
+		}
+		if (list.size() > 1) {
+			list.add("all");
 		}
 		return list;
 	}
